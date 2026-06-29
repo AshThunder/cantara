@@ -12,9 +12,12 @@ https://github.com/AshThunder/cantara
 ```
 
 ### Link to Presentation (Required)
-Upload `docs/PRESENTATION.md` content to Google Slides / Canva, then paste the share link.
+Upload `docs/Cantara-Checkpoint-2.pptx` to Google Slides:
+1. Go to https://slides.google.com → **Blank presentation**
+2. **File → Import slides → Upload** → select `Cantara-Checkpoint-2.pptx`
+3. **File → Share** → Anyone with the link → paste URL in Encode form
 
-Quick option: create a Google Slides deck from `docs/PRESENTATION.md` (10 slides).
+Or regenerate locally: `cd docs && node generate-slides.mjs`
 
 ### Project Challenges & Tracks
 Add both:

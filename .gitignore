@@ -9,3 +9,5 @@ backend/dist/
 *.pdf
 .DS_Store
 uidesign/
+docs/node_modules/
+.venv-slides/
