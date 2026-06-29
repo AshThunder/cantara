@@ -61,8 +61,7 @@ cantara/
 ├── frontend/              # React app (teal & amber theme)
 └── docs/
     ├── PROGRESS.md        # Development log
-    ├── PRESENTATION.md    # Slide deck content
-    └── CHECKPOINT-2.md    # Submission checklist
+    └── PRESENTATION.md    # Slide content (deck generated locally)
 ```
 
 ---
@@ -94,7 +93,9 @@ npm install
 npm run dev    # http://localhost:5173
 ```
 
-Connect as a demo party (Alice, Bob, Carol, Financier). UI proxies `/api` to the backend.
+**Important:** Run the backend first (see above). The UI needs the API on port 3001 — without it, party connect will fail and pages may appear blank after clicking Get Started.
+
+Open **http://localhost:5173** (not port 3001). Connect as a demo party (Alice, Bob, Carol, Financier). UI proxies `/api` to the backend.
 
 ---
 
@@ -140,8 +141,7 @@ On Canton, privacy comes from **party-based visibility** in Daml:
 ## Documentation
 
 - [Progress log](docs/PROGRESS.md)
-- [Presentation deck](docs/PRESENTATION.md)
-- [Checkpoint 2 guide](docs/CHECKPOINT-2.md)
+- [Presentation outline](docs/PRESENTATION.md) — run `cd docs && node generate-slides.mjs` to build `.pptx` locally (not in repo)
 
 ---
 

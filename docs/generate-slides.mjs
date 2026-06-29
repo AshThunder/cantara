@@ -1,5 +1,10 @@
 import PptxGenJS from 'pptxgenjs';
-import { writeFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ASSETS = path.join(__dirname, 'presentation-assets');
+const OUT = path.join(__dirname, 'Cantara-Checkpoint-2.pptx');
 
 const pptx = new PptxGenJS();
 pptx.layout = 'LAYOUT_16x9';
@@ -16,10 +21,10 @@ const GRAY = '5F8A85';
 function addTitleSlide(title, subtitle, footer) {
   const slide = pptx.addSlide();
   slide.background = { color: DEEP };
-  slide.addText(title, { x: 0.5, y: 1.8, w: 9, h: 1.2, fontSize: 44, bold: true, color: WHITE, fontFace: 'Arial' });
-  slide.addText(subtitle, { x: 0.5, y: 3.1, w: 9, h: 0.8, fontSize: 22, color: TEAL_LIGHT, fontFace: 'Arial', italic: true });
+  slide.addText(title, { x: 0.5, y: 1.6, w: 9, h: 1.2, fontSize: 44, bold: true, color: WHITE, fontFace: 'Arial' });
+  slide.addText(subtitle, { x: 0.5, y: 2.9, w: 9, h: 0.9, fontSize: 22, color: TEAL_LIGHT, fontFace: 'Arial', italic: true });
   if (footer) {
-    slide.addText(footer, { x: 0.5, y: 4.5, w: 9, h: 1.2, fontSize: 14, color: GRAY, fontFace: 'Arial' });
+    slide.addText(footer, { x: 0.5, y: 4.2, w: 9, h: 1.4, fontSize: 14, color: GRAY, fontFace: 'Arial' });
   }
 }
 
@@ -29,14 +34,14 @@ function addContentSlide(title, bullets, note) {
   slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 10, h: 0.15, fill: { color: TEAL } });
   slide.addText(title, { x: 0.5, y: 0.4, w: 9, h: 0.8, fontSize: 28, bold: true, color: DEEP, fontFace: 'Arial' });
   slide.addText(bullets.map((b) => ({ text: b, options: { bullet: true, breakLine: true } })), {
-    x: 0.6, y: 1.4, w: 8.8, h: 3.8, fontSize: 16, color: DEEP, fontFace: 'Arial', valign: 'top',
+    x: 0.6, y: 1.35, w: 8.8, h: 3.6, fontSize: 16, color: DEEP, fontFace: 'Arial', valign: 'top',
   });
   if (note) {
-    slide.addText(note, { x: 0.5, y: 4.8, w: 9, h: 0.5, fontSize: 13, color: TEAL, fontFace: 'Arial', italic: true });
+    slide.addText(note, { x: 0.5, y: 4.75, w: 9, h: 0.55, fontSize: 13, color: TEAL, fontFace: 'Arial', italic: true });
   }
 }
 
-function addTableSlide(title, headers, rows) {
+function addTableSlide(title, headers, rows, note) {
   const slide = pptx.addSlide();
   slide.background = { color: MINT };
   slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 10, h: 0.15, fill: { color: TEAL } });
@@ -46,115 +51,172 @@ function addTableSlide(title, headers, rows) {
     ...rows.map((r) => r.map((c) => ({ text: c }))),
   ];
   slide.addTable(tableRows, {
-    x: 0.5, y: 1.4, w: 9, colW: [4.5, 4.5],
+    x: 0.5, y: 1.35, w: 9, colW: headers.map(() => 9 / headers.length),
     fontSize: 14, color: DEEP, border: { pt: 0.5, color: TEAL_LIGHT },
   });
+  if (note) {
+    slide.addText(note, { x: 0.5, y: 4.75, w: 9, h: 0.55, fontSize: 13, color: GRAY, fontFace: 'Arial', italic: true });
+  }
 }
 
-// Slide 1
+function addImageSlide(title, imageFile, caption, bullets = []) {
+  const slide = pptx.addSlide();
+  slide.background = { color: MINT };
+  slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 10, h: 0.15, fill: { color: TEAL } });
+  slide.addText(title, { x: 0.5, y: 0.35, w: 9, h: 0.65, fontSize: 24, bold: true, color: DEEP, fontFace: 'Arial' });
+  slide.addImage({
+    path: path.join(ASSETS, imageFile),
+    x: bullets.length ? 0.45 : 0.55,
+    y: 1.05,
+    w: bullets.length ? 5.6 : 8.9,
+    h: bullets.length ? 3.55 : 3.65,
+    sizing: { type: 'contain', w: bullets.length ? 5.6 : 8.9, h: bullets.length ? 3.55 : 3.65 },
+  });
+  if (bullets.length) {
+    slide.addText(bullets.map((b) => ({ text: b, options: { bullet: true, breakLine: true } })), {
+      x: 6.25, y: 1.15, w: 3.2, h: 3.4, fontSize: 13, color: DEEP, fontFace: 'Arial', valign: 'top',
+    });
+  }
+  if (caption) {
+    slide.addText(caption, {
+      x: 0.5, y: 4.75, w: 9, h: 0.5, fontSize: 12, color: TEAL, fontFace: 'Arial', italic: true,
+    });
+  }
+}
+
+// 1 — Title
 addTitleSlide(
   'Cantara',
   'Private payments & trade finance on Canton',
-  'Build on Canton Hackathon · Encode Club\nTrack 3: Payments · Track 1: Private DeFi\n\nAshThunder / Chris Gold\ngithub.com/AshThunder/cantara'
+  'Build on Canton Hackathon · Encode Club\nTracks: Payments (T3) + Private DeFi (T1)\n\nAshThunder / Chris Gold\ngithub.com/AshThunder/cantara'
 );
 
-// Slide 2
+// 2 — Problem (convincing hook)
 addContentSlide(
-  'Institutional finance needs privacy, not publicity',
+  'The gap: public chains vs. institutional reality',
   [
-    'Public blockchains expose every payment and balance',
-    'Trade finance involves 3+ parties with different visibility needs',
-    'SMEs wait 30–90 days for invoice payment with no shared source of truth',
+    'Banks and SMEs cannot put payment flows and invoice terms on a public ledger',
+    'Trade finance needs 3+ parties — each with different data they should (and should not) see',
+    'Today: fragmented tools, 30–90 day payment delays, no shared private source of truth',
+    'Result: costly intermediaries, leakage of competitive terms, slow working capital',
   ],
-  'Payments and receivables should be private by default.'
+  'Cantara targets the overlap: everyday payments + receivables financing — both need privacy.'
 );
 
-// Slide 3
-addTableSlide('Cantara — one platform, two modules', ['Payments', 'Invoices'], [
-  ['P2P send & refund', 'Supplier issues invoice'],
-  ['Payment requests', 'Buyer confirms'],
-  ['Subscriptions', 'Financier bids confidentially'],
-  ['Multi-send', 'Settlement on maturity'],
-]);
-{
-  const slide = pptx.slides[pptx.slides.length - 1];
-  slide.addText('Built on Canton Network with Daml smart contracts', {
-    x: 0.5, y: 4.6, w: 9, h: 0.5, fontSize: 14, color: TEAL, fontFace: 'Arial', italic: true,
-  });
-}
-
-// Slide 4
+// 3 — Why Canton (the reason to build here)
 addContentSlide(
-  'Party-based privacy — built into the ledger',
+  'Why Canton — privacy is a first-class primitive',
   [
-    'Only signatories & observers see contract data',
-    'Multi-party workflows native to Daml',
-    'Institutional-grade infrastructure (5N Sandbox, Global Synchronizer)',
+    'Daml contracts define who sees what: signatories, observers, controllers per choice',
+    'Multi-party workflows are native — not bolted on with ZK proofs or off-chain databases',
+    'Institutional validators (5N Sandbox, Global Synchronizer) — built for regulated finance',
+    'We deployed cantara-0.1.0.dar and exercised real choices on-ledger — not a mockup',
   ],
-  'Unlike Ethereum: privacy by who is on the contract, not encryption on a public chain.'
+  'Privacy by party membership beats encryption on a transparent chain for B2B finance.'
 );
 
-// Slide 5
+// 4 — Solution
+addTableSlide('One platform, two hackathon tracks', ['Payments (T3)', 'Invoices (T1)'], [
+  ['P2P send, refund, requests', 'Supplier proposes invoice'],
+  ['Subscriptions & multi-send', 'Buyer confirms & attests'],
+  ['Private balances per party', 'Financier offers confidential terms'],
+  ['Activity & dashboard', 'Settlement on maturity'],
+], 'Same counterparty graph, same privacy model — one product story for judges.');
+
+// 5 — Architecture
 addContentSlide(
-  'Architecture',
+  'End-to-end architecture',
   [
-    'React UI → REST API → Canton JSON Ledger API → 5N Sandbox',
-    'Daml contracts (cantara-0.1.0.dar)',
-    'Frontend: React + teal theme, party connect',
-    'Backend: TypeScript API (demo + production path)',
+    'React UI — party connect, payments, invoice workflow (live demo)',
+    'TypeScript REST API — demo ledger today; JSON Ledger API path to 5N Sandbox',
+    'Daml templates — 12 contract types in cantara-0.1.0.dar',
+    'Deployed on 5N Sandbox via Seaport — package ID b011f10b…cf3f58',
   ]
 );
 
-// Slide 6
+// 6 — Contracts built
 addContentSlide(
-  "What's built",
+  'Smart contracts delivered',
   [
-    'Daml: Payment, Refund, PaymentRequest, Subscription, PaymentBatch',
-    'Invoices: full financing lifecycle (6 templates)',
-    'App: Dashboard, Send, Invoices, Activity + demo REST API',
-    'Deployed on 5N Sandbox — payment created + refunded on-ledger ✅',
+    'Payments: Payment, RefundedPayment, PaymentRequest, Subscription, PaymentBatch',
+    'Invoices: proposal → confirmation → attestation → offer → finance → settlement',
+    'Demo script exercises full flows in Daml',
+    'Checkpoint proof: Payment create + Refund exercised on shared validator ✅',
   ]
 );
 
-// Slide 7
-addTableSlide('Live demo proof (Seaport / 5N Sandbox)', ['Action', 'Status'], [
-  ['Create Payment', '✅ Done'],
-  ['Refund Payment', '✅ Done'],
-  ['Invoice workflow', '🔄 In progress'],
+// 7 — Product: Dashboard
+addImageSlide(
+  'Working product — unified dashboard',
+  'dashboard.png',
+  'Local full-stack demo: Daml-backed API, React UI, party-based session.',
+  [
+    'Private balance view',
+    'Send, request, invoice actions',
+    'Stats from live API',
+    'Built for hackathon demo, not slides-only',
+  ]
+);
+
+// 8 — Product: Activity
+addImageSlide(
+  'Payments in action',
+  'activity.png',
+  'Alice → Bob $100 payment visible in Activity — amounts scoped to involved parties.',
+  [
+    'P2P payment recorded',
+    'Role-aware UI',
+    'Track 3 deliverable',
+  ]
+);
+
+// 9 — On-ledger: Payment created
+addImageSlide(
+  'On-ledger proof — Payment created',
+  'execution-log.png',
+  'Seaport execution log: PaymentActive contract on 5N Sandbox, June 29 2026.',
+  [
+    'Real CreatedEvent',
+    'USD 100.00 on-ledger',
+    'Not simulated',
+  ]
+);
+
+// 10 — On-ledger: Refund
+addImageSlide(
+  'On-ledger proof — Refund exercised',
+  'refunded-payment.png',
+  'Payment_Refund choice produced RefundedPayment — full payment lifecycle proven.',
+  [
+    'RefundedPayment active',
+    '12 templates in DAR',
+    'Validator: 5N Sandbox',
+  ]
+);
+
+// 11 — Privacy model
+addContentSlide(
+  'Privacy in action — selective disclosure by design',
+  [
+    'Payment: sender signs, recipient observes — amount hidden from everyone else',
+    'Financing offer: financier + supplier only — buyer sees attestation, not terms',
+    'Invoice stages reveal more only as workflow progresses',
+    'Matches how real trade finance desks negotiate — on a shared private ledger',
+  ]
+);
+
+// 12 — Roadmap & ask
+addTableSlide('Roadmap to final demo', ['Phase', 'Deliverable'], [
+  ['✅ Done', 'Daml build, deploy, payment + refund on-ledger, full UI'],
+  ['🔄 Next', 'Invoice workflow on Seaport, Loop party on sandbox'],
+  ['Final', 'Backend wired to JSON Ledger API, demo video'],
 ]);
 {
   const slide = pptx.slides[pptx.slides.length - 1];
-  slide.addText('Package ID: b011f10b...cf3f58 · Screenshots available', {
-    x: 0.5, y: 4.6, w: 9, h: 0.5, fontSize: 13, color: GRAY, fontFace: 'Arial', italic: true,
+  slide.addText('github.com/AshThunder/cantara · Questions welcome', {
+    x: 0.5, y: 4.85, w: 9, h: 0.4, fontSize: 14, bold: true, color: DEEP, fontFace: 'Arial',
   });
 }
 
-// Slide 8
-addContentSlide(
-  'Privacy in action',
-  [
-    'Payment: signatory = sender, observer = recipient — amount private to both',
-    'Financing offer: signatory = financier, observer = supplier',
-    'Terms hidden from buyer until settlement',
-  ],
-  'Selective visibility per workflow stage.'
-);
-
-// Slide 9
-addTableSlide('Roadmap', ['Phase', 'Deliverable'], [
-  ['✅ Now', 'Daml contracts, deploy, payment demo'],
-  ['🔄 This week', 'Invoice on-ledger demo, checkpoint submission'],
-  ['Next', 'Backend → JSON Ledger API, Loop party allocation'],
-  ['Final', 'Full UI ↔ Canton integration, demo video'],
-]);
-
-// Slide 10
-addTitleSlide(
-  'Thank you',
-  'Cantara — private finance that flows on Canton',
-  'github.com/AshThunder/cantara\nDeployed on 5N Sandbox via Seaport\nTracks: Payments (T3) + Private DeFi (T1)\n\nQuestions welcome'
-);
-
-const out = '/home/michael/canton/cantara/docs/Cantara-Checkpoint-2.pptx';
-await pptx.writeFile({ fileName: out });
-console.log('Created:', out);
+await pptx.writeFile({ fileName: OUT });
+console.log('Created:', OUT);

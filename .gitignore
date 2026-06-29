@@ -10,4 +10,7 @@ backend/dist/
 .DS_Store
 uidesign/
 docs/node_modules/
+docs/presentation-assets/
+docs/CHECKPOINT-2.md
+docs/Cantara-Checkpoint-2.pptx
 .venv-slides/

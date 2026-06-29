@@ -1,6 +1,9 @@
 # Cantara — Checkpoint 2 Presentation
 
-Copy each slide into Google Slides / Canva / Pitch. ~10 slides, 3–5 min pitch.
+**Local only** — generate deck with `cd docs && node generate-slides.mjs`  
+Output: `docs/Cantara-Checkpoint-2.pptx` (gitignored — upload to Google Slides for submission)
+
+Place screenshots in `docs/presentation-assets/` before generating.
 
 ---
 
@@ -10,7 +13,7 @@ Copy each slide into Google Slides / Canva / Pitch. ~10 slides, 3–5 min pitch.
 *Private payments & trade finance on Canton*
 
 Build on Canton Hackathon · Encode Club  
-Track 3: Payments · Track 1: Private DeFi
+Tracks: Payments (T3) + Private DeFi (T1)
 
 AshThunder / Chris Gold  
 https://github.com/AshThunder/cantara
@@ -19,122 +22,108 @@ https://github.com/AshThunder/cantara
 
 ## Slide 2 — Problem
 
-**Institutional finance needs privacy, not publicity**
+**The gap: public chains vs. institutional reality**
 
-- Public blockchains expose every payment and balance
-- Trade finance involves 3+ parties with different visibility needs
-- SMEs wait 30–90 days for invoice payment with no shared source of truth
+- Banks and SMEs cannot put payment flows and invoice terms on a public ledger
+- Trade finance needs 3+ parties — each with different visibility requirements
+- Fragmented tools, 30–90 day delays, no shared private source of truth
+- Costly intermediaries, leaked competitive terms, trapped working capital
 
-*Payments and receivables should be private by default.*
-
----
-
-## Slide 3 — Solution
-
-**Cantara — one platform, two modules**
-
-| Payments | Invoices |
-|----------|----------|
-| P2P send & refund | Supplier issues invoice |
-| Payment requests | Buyer confirms |
-| Subscriptions | Financier bids confidentially |
-| Multi-send | Settlement on maturity |
-
-Built on **Canton Network** with **Daml** smart contracts.
+*Cantara targets the overlap: everyday payments + receivables financing — both need privacy.*
 
 ---
 
-## Slide 4 — Why Canton?
+## Slide 3 — Why Canton
 
-**Party-based privacy — built into the ledger**
+**Privacy is a first-class primitive**
 
-- Only signatories & observers see contract data
-- Multi-party workflows native to Daml
-- Institutional-grade infrastructure (5N Sandbox, Global Synchronizer)
+- Daml defines who sees what: signatories, observers, controllers
+- Multi-party workflows are native — not bolted on
+- Institutional validators (5N Sandbox, Global Synchronizer)
+- We deployed `cantara-0.1.0.dar` and exercised real choices on-ledger
 
-Unlike Ethereum: privacy by **who is on the contract**, not encryption on a public chain.
+*Privacy by party membership beats encryption on a transparent chain for B2B finance.*
+
+---
+
+## Slide 4 — Solution
+
+**One platform, two hackathon tracks**
+
+| Payments (T3) | Invoices (T1) |
+|---------------|---------------|
+| P2P send, refund, requests | Supplier proposes invoice |
+| Subscriptions & multi-send | Buyer confirms & attests |
+| Private balances per party | Financier offers confidential terms |
+| Activity & dashboard | Settlement on maturity |
+
+*Same counterparty graph, same privacy model.*
 
 ---
 
 ## Slide 5 — Architecture
 
-```
-React UI  →  REST API  →  Canton JSON Ledger API  →  5N Sandbox
-                ↓
-         Daml contracts (cantara-0.1.0.dar)
-```
-
-- **Frontend:** React + teal theme, party connect
-- **Backend:** TypeScript API (demo + production path)
-- **Contracts:** Daml templates for payments & invoices
+- React UI — party connect, payments, invoices
+- TypeScript REST API → JSON Ledger API (5N Sandbox)
+- Daml: 12 templates in `cantara-0.1.0.dar`
+- Deployed via Seaport — package `b011f10b…cf3f58`
 
 ---
 
-## Slide 6 — What's built
+## Slide 6 — Smart contracts
 
-**Smart contracts (Daml)**
-- Payment, Refund, PaymentRequest, Subscription, PaymentBatch
-- Full invoice financing lifecycle (6 templates)
-
-**Application**
-- Dashboard, Send, Invoices, Activity pages
-- Demo backend with REST API
-
-**Deployed & tested on 5N Sandbox**
-- Package `cantara` v0.1.0 live on validator
-- Payment created + refunded on-ledger ✅
+- Payments: Payment, RefundedPayment, Request, Subscription, Batch
+- Invoices: full lifecycle (6 templates)
+- **Proven on-ledger:** Payment create + Refund ✅
 
 ---
 
-## Slide 7 — Live demo proof
+## Slide 7 — Screenshot: Dashboard
 
-**On-ledger transactions (Seaport / 5N Sandbox)**
+![Dashboard](presentation-assets/dashboard.png)
 
-| Action | Template | Status |
-|--------|----------|--------|
-| Create payment | `Payment` | ✅ Done |
-| Refund payment | `Payment_Refund` | ✅ Done |
-| Invoice workflow | `InvoiceProposal` → `SettledInvoice` | In progress |
-
-Package ID: `b011f10b...cf3f58`
-
-*Screenshots + Seaport Contracts tab available*
+*Unified UI — private balance, send/request/invoice, live API stats*
 
 ---
 
-## Slide 8 — Privacy in action
+## Slide 8 — Screenshot: Activity
 
-**Payment contract**
-- Signatory: sender
-- Observer: recipient
-- Amount visible only to both parties
+![Activity](presentation-assets/activity.png)
 
-**Financing offer**
-- Signatory: financier
-- Observer: supplier
-- Terms hidden from buyer until settlement
-
-*Selective visibility per workflow stage.*
+*Alice → Bob $100 — Track 3 payments deliverable*
 
 ---
 
-## Slide 9 — Roadmap
+## Slide 9 — Screenshot: Payment on-ledger
+
+![Execution log](presentation-assets/execution-log.png)
+
+*Seaport CreatedEvent — PaymentActive, USD 100, 5N Sandbox*
+
+---
+
+## Slide 10 — Screenshot: Refund on-ledger
+
+![Refunded payment](presentation-assets/refunded-payment.png)
+
+*Payment_Refund → RefundedPayment — full lifecycle proven*
+
+---
+
+## Slide 11 — Privacy in action
+
+- Payment: sender signs, recipient observes
+- Financing offer: financier + supplier only
+- Invoice stages reveal more as workflow progresses
+
+---
+
+## Slide 12 — Roadmap & links
 
 | Phase | Deliverable |
 |-------|-------------|
-| ✅ Now | Daml contracts, deploy, payment demo |
-| 🔄 This week | Invoice on-ledger demo, checkpoint submission |
-| Next | Backend → JSON Ledger API, Loop party allocation |
-| Final | Full UI ↔ Canton integration, hackathon demo video |
+| ✅ Done | Daml, deploy, payment+refund, full UI |
+| 🔄 Next | Invoice on Seaport, Loop party allocation |
+| Final | JSON Ledger API wiring, demo video |
 
----
-
-## Slide 10 — Ask & links
-
-**Cantara** — private finance that flows on Canton
-
-- GitHub: https://github.com/AshThunder/cantara
-- Deployed on 5N Sandbox via Seaport
-- Tracks: Payments (T3) + Private DeFi (T1)
-
-**Thank you** — questions welcome
+**github.com/AshThunder/cantara** — Questions welcome
