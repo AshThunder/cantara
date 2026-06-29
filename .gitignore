@@ -1,0 +1,11 @@
+.daml/
+log/
+*.dar
+node_modules/
+dist/
+backend/dist/
+.env
+.env.local
+*.pdf
+.DS_Store
+uidesign/

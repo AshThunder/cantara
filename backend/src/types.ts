@@ -1,0 +1,71 @@
+export type Party = {
+  id: string;
+  displayName: string;
+  role: 'personal' | 'business';
+};
+
+export type Payment = {
+  contractId: string;
+  sender: string;
+  recipient: string;
+  paymentId: string;
+  amount: number;
+  currency: string;
+  description: string;
+  status: 'active' | 'refunded';
+  createdAt: string;
+};
+
+export type PaymentRequest = {
+  contractId: string;
+  requester: string;
+  requestId: string;
+  amount: number | null;
+  currency: string;
+  description: string;
+  createdAt: string;
+  expiresAt: string;
+  fulfilled: boolean;
+};
+
+export type InvoiceProposal = {
+  contractId: string;
+  supplier: string;
+  buyer: string;
+  invoiceId: string;
+  description: string;
+  amount: number;
+  currency: string;
+  dueDate: string;
+  status: 'pending' | 'accepted' | 'rejected' | 'withdrawn';
+  submittedAt: string;
+};
+
+export type Invoice = {
+  contractId: string;
+  supplier: string;
+  buyer: string;
+  invoiceId: string;
+  description: string;
+  amount: number;
+  currency: string;
+  dueDate: string;
+  confirmedAt: string;
+  stage: 'confirmed' | 'attested' | 'financed' | 'settled';
+  financier?: string;
+  financingTerms?: {
+    advanceRate: number;
+    discountFee: number;
+    currency: string;
+  };
+  offerId?: string;
+  financedAt?: string;
+  settledAt?: string;
+};
+
+export const PARTIES: Party[] = [
+  { id: 'Alice', displayName: 'Alice', role: 'personal' },
+  { id: 'Bob', displayName: 'Bob', role: 'personal' },
+  { id: 'Carol', displayName: 'Carol', role: 'business' },
+  { id: 'Financier', displayName: 'Financier', role: 'business' },
+];

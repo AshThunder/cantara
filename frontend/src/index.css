@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* Cantara — Teal & Amber theme */
+
+:root {
+  --color-primary: #0D9488;
+  --color-primary-light: #14B8A6;
+  --color-primary-dark: #0F766E;
+  --color-accent: #F59E0B;
+  --color-bg-white: #FFFFFF;
+  --color-bg-light: #F0FDFA;
+  --color-bg-dark: #042F2E;
+  --color-text-primary: #134E4A;
+  --color-text-secondary: #5F8A85;
+  --color-text-on-dark: #FFFFFF;
+  --color-success: #059669;
+  --color-warning: #D97706;
+  --color-error: #DC2626;
+  --color-border-light: #CCFBF1;
+  --color-border-input: #99F6E4;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-white);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 2px;
+}
+
+@theme {
+  --color-cantara-teal: #0D9488;
+  --color-cantara-teal-light: #14B8A6;
+  --color-cantara-teal-dark: #0F766E;
+  --color-cantara-deep: #042F2E;
+  --color-cantara-accent: #F59E0B;
+  --color-cantara-mint: #F0FDFA;
+  --color-success: #059669;
+  --color-warning: #D97706;
+  --color-error: #DC2626;
+  --color-gray-50: #F0FDFA;
+  --color-gray-100: #CCFBF1;
+  --color-gray-200: #99F6E4;
+  --color-gray-300: #5EEAD4;
+  --color-gray-400: #2DD4BF;
+  --color-gray-500: #5F8A85;
+  --color-gray-600: #3D6B66;
+  --color-gray-700: #2D524E;
+  --color-gray-800: #134E4A;
+  --color-gray-900: #042F2E;
+}

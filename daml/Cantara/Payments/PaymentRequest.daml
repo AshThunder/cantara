@@ -1,0 +1,79 @@
+module Cantara.Payments.PaymentRequest where
+
+import DA.Time
+import DA.Assert (assertWithinDeadline, assertMsg)
+import Cantara.Payments.Types
+import Cantara.Payments.Payment
+
+-- | Payment request with shareable link / QR support.
+template PaymentRequest
+  with
+    requester : Party
+    requestId : Text
+    amount : RequestAmount
+    currency : Text
+    description : Text
+    createdAt : Time
+    expiresAt : Time
+  where
+    signatory requester
+
+    choice PaymentRequest_Fulfill : ContractId Payment
+      with
+        payer : Party
+        paidAmount : Decimal
+        paymentId : Text
+      controller payer
+      do
+        now <- getTime
+        assertWithinDeadline "expiresAt" expiresAt
+        case amount of
+          FixedAmount expected ->
+            assertMsg "Paid amount must match request" (paidAmount == expected)
+          AnyAmount -> pure ()
+        create Payment with
+          sender = payer
+          recipient = requester
+          details = PaymentDetails with
+            paymentId
+            amount = paidAmount
+            currency
+            description
+          status = PaymentActive
+          createdAt = now
+
+    choice PaymentRequest_Cancel : ()
+      controller requester
+      do pure ()
+
+-- | Propose a payment to a known recipient without a prior request.
+template PaymentProposal
+  with
+    sender : Party
+    recipient : Party
+    details : PaymentDetails
+    proposedAt : Time
+  where
+    signatory sender
+    observer recipient
+
+    choice PaymentProposal_Accept : ContractId Payment
+      controller recipient
+      do
+        now <- getTime
+        create Payment with
+          sender
+          recipient
+          details
+          status = PaymentActive
+          createdAt = now
+
+    choice PaymentProposal_Reject : ()
+      with
+        reason : Text
+      controller recipient
+      do pure ()
+
+    choice PaymentProposal_Withdraw : ()
+      controller sender
+      do pure ()

@@ -1,0 +1,19 @@
+module Cantara.Invoices.Types where
+
+-- | Shared invoice metadata visible to supplier and buyer.
+data InvoiceDetails = InvoiceDetails
+  with
+    invoiceId : Text
+    description : Text
+    amount : Decimal
+    currency : Text
+    dueDate : Time
+  deriving (Eq, Show)
+
+-- | Confidential financing terms visible only to supplier and financier.
+data FinancingTerms = FinancingTerms
+  with
+    advanceRate : Decimal
+    discountFee : Decimal
+    currency : Text
+  deriving (Eq, Show)
