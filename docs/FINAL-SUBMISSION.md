@@ -9,17 +9,34 @@ Canton Foundation (Jatin): *no Testnet; use Seaport on provided 5N DevNet.*
 
 ---
 
+## Live product (ready for form)
+
+| Resource | URL |
+|----------|-----|
+| **App** | https://cantara-hackathon.vercel.app |
+| **API** | https://cantara-api-production.up.railway.app |
+| **Health** | https://cantara-api-production.up.railway.app/api/health → `mode: "canton"` |
+| **Repo** | https://github.com/AshThunder/cantara |
+| **Video** | *(record Sat 11–12 Jul — paste YouTube/Loom here)* |
+| **Deck** | *(Google Slides share link — paste here)* |
+| **DevNet** | `cantara` v0.1.0 on 5N Sandbox via Seaport |
+
+**Package ID:** `b011f10b002d597291b67192a3c6c036a5ea9c7387726718292833d2c3cf3f58`  
+**Operator:** `5nsandbox-devnet-2::1220a14ca128063b8dc9d1ebb0bd22633be9f2168500f4dbc1ecaeb1855b14e5acf8`
+
+---
+
 ## Submission checklist
 
 | # | Requirement | Status | Owner / notes |
 |---|-------------|--------|----------------|
-| 1 | Public repository | ✅ Done | GitHub public, README polished |
-| 2 | Presentation deck | 🟡 Local | Generate pptx → Google Slides → share link |
-| 3 | 3‑minute video pitch + demo | ❌ Todo | Script below |
-| 4 | Link to live product | ❌ Todo | **Vercel** (frontend) + API host (see below) |
-| 5 | Deployed on Canton DevNet | 🟡 Partial | Payment + Refund ✅ · Invoice on-ledger ❌ |
+| 1 | Public repository | ✅ Done | https://github.com/AshThunder/cantara |
+| 2 | Presentation deck | 🟡 Local | `cd docs && node generate-slides.mjs` → Google Slides → share link |
+| 3 | 3‑minute video pitch + demo | ❌ Todo | Script below — use live Vercel URL |
+| 4 | Link to live product | ✅ Done | https://cantara-hackathon.vercel.app |
+| 5 | Deployed on Canton DevNet | ✅ Done | Payments + refunds + full invoice lifecycle via Railway → 5N |
 
-**Definition of done:** All five rows green before Monday 12:59 BST.
+**Definition of done:** Rows 2–3 green before Monday 12:59 BST (1, 4, 5 already green).
 
 ---
 
@@ -27,124 +44,51 @@ Canton Foundation (Jatin): *no Testnet; use Seaport on provided 5N DevNet.*
 
 - Daml contracts built (`cantara-0.1.0.dar`, SDK 3.5.1)
 - Package on **5N Sandbox DevNet** via Seaport
-- On-ledger proof: `Payment` create + `Payment_Refund` → `RefundedPayment`
-- Full-stack demo: React UI + Express demo API
-- Presentation with UI + Seaport screenshots (local pptx)
+- On-ledger: `Payment`, `Payment_Refund`, full invoice lifecycle (propose → accept → attest → offer → settle)
+- Live stack: Vercel frontend + Railway API (`LEDGER_MODE=canton`) → JSON Ledger API
+- Features live: send, multi-send, subscriptions (+ scheduler), checkout/pay, wallet, invoices, merchant SDK
+- Smoke verified (10 Jul 2026): health, parties, UI send Alice→Bob, API invoice settle
 
 ---
 
-## Workstream A — On-ledger (Seaport / DevNet)
+## Workstream A — On-ledger (Seaport / DevNet) ✅
 
-**Step-by-step guide:** [SEAPORT-INVOICE-DEMO.md](SEAPORT-INVOICE-DEMO.md)  
-**Daml zip for copy:** `docs/seaport-daml-sync.zip` (regenerate: `zip -r docs/seaport-daml-sync.zip daml.yaml daml/`)
+**Step-by-step guide:** [SEAPORT-INVOICE-DEMO.md](SEAPORT-INVOICE-DEMO.md)
 
-**Why:** Judges require contracts running on DevNet, not just local demo.
-
-### A1. Sync Seaport workspace with real Daml
-
-Your Seaport project is still a stub (`0.0.1`, empty `daml/`). Copy from local repo:
-
-```
-daml.yaml          → sdk 3.5.1, version 0.1.0
-daml/Cantara/      → entire tree (Payments/, Invoices/, Scripts/)
-```
-
-In Seaport: **Save → Build Project → Deploy**
-
-### A2. Demo invoice workflow on-ledger
-
-Minimum for T1 credibility (pick one path):
-
-1. **InvoiceProposal** — supplier submits to buyer  
-2. **Accept** — buyer confirms → `Invoice`  
-3. (Stretch) **Attest** → **FinancingOffer** → **Settle**
-
-Use sandbox operator party `5nsandbox-devnet-2::1220a14ca128063b8dc9d1ebb0bd22633be9f2168500f4dbc1ecaeb1855b14e5acf8` until Loop party is allocated.
-
-### A3. Capture proof for video + deck
+Package deployed; API exercises contracts on DevNet. Optional polish:
 
 - [ ] Screenshot: Packages list showing `cantara` v0.1.0  
-- [ ] Screenshot: Invoice contract created  
-- [ ] Screenshot: Execution log (CreatedEvent)  
-- [ ] Note package ID: `b011f10b002d597291b67192a3c6c036a5ea9c7387726718292833d2c3cf3f58`
-
-### A4. Optional — Loop party on sandbox
-
-Ask in **#canton** Discord for your Loop party on 5N Sandbox (removes 403 on `actAs`).
+- [ ] Screenshot: Invoice / Payment in Lighthouse for video  
+- [ ] Optional: distinct Loop parties (today all UI parties map to one operator)
 
 ---
 
-## Workstream B — Vercel (live product — frontend)
+## Workstream B — Vercel (frontend) ✅
 
-**Full guide:** [DEPLOY.md](DEPLOY.md)
+**Live:** https://cantara-hackathon.vercel.app  
+**Guide:** [DEPLOY.md](DEPLOY.md)
 
-**Why:** Submission needs a public URL, not `localhost:5173`.
+| Setting | Value |
+|---------|--------|
+| Root | `frontend` |
+| Env | `VITE_API_URL=https://cantara-api-production.up.railway.app/api` |
+| SSO | Disabled (public) |
 
-Vercel hosts the **React frontend**. The demo API is a separate Express server (see Workstream C).
-
-### B1. Vercel project setup
-
-1. Go to [vercel.com](https://vercel.com) → Import `AshThunder/cantara`  
-2. **Root Directory:** `frontend`  
-3. **Framework Preset:** Vite  
-4. **Build Command:** `npm run build`  
-5. **Output Directory:** `dist`  
-6. Deploy
-
-`frontend/vercel.json` is included for React Router (SPA rewrites).
-
-### B2. Environment variables (Vercel dashboard)
-
-| Variable | Value |
-|----------|--------|
-| `VITE_API_URL` | `https://YOUR-API-HOST/api` |
-
-Set this **after** Workstream C so the live site talks to the hosted API.
-
-Redeploy after adding env vars (Vite bakes them at build time).
-
-### B3. Verify live frontend
-
-- [ ] Landing page loads  
-- [ ] No blank page after Get Started (API must be up)  
-- [ ] Connect Party shows Alice, Bob, Carol, Financier  
-- [ ] Dashboard / Send / Activity work  
-- [ ] Copy Vercel URL for submission form (e.g. `https://cantara.vercel.app`)
+Verified: landing → Get Started → Dashboard → Send → Lighthouse tx/contract links.
 
 ---
 
-## Workstream C — API hosting (backend)
+## Workstream C — Railway (API) ✅
 
-**Why:** Vercel runs static/Vite builds well; our **Express** demo API needs a Node host.
+**Live:** https://cantara-api-production.up.railway.app  
+**Health:** `GET /api/health` → `"mode":"canton"`
 
-`frontend` calls `VITE_API_URL` (see `src/lib/api.ts`). Local dev uses Vite proxy `/api` → `:3001`.
-
-### Recommended: Railway or Render (free tier, minimal changes)
-
-**Railway example:**
-
-1. New project → Deploy from GitHub → select `cantara` repo  
-2. **Root Directory:** `backend`  
-3. **Start command:** `npm run build && npm start`  
-4. Public URL e.g. `https://cantara-api.up.railway.app`  
-5. In Vercel: `VITE_API_URL=https://cantara-api.up.railway.app/api`  
-6. Redeploy Vercel frontend
-
-**Render:** same pattern (Web Service, root `backend`, build `npm install && npm run build`, start `npm start`).
-
-### CORS
-
-Backend already uses `cors()`. If needed, restrict to your Vercel domain in production.
-
-### Alternative (later)
-
-Wire backend to Canton JSON Ledger API (5N Sandbox credentials) instead of in-memory ledger — not required for submission if Seaport proofs exist.
+Root `backend`, Canton env from 5N credentials (secret **not** in git).  
+CORS via `FRONTEND_URLS` including the Vercel origin.
 
 ---
 
 ## Workstream D — 3‑minute video
-
-**Why:** Required for final submission.
 
 ### Suggested script (~3:00)
 
@@ -152,62 +96,46 @@ Wire backend to Canton JSON Ledger API (5N Sandbox credentials) instead of in-me
 |------|---------|
 | 0:00–0:25 | Problem: institutional payments + invoice finance need privacy |
 | 0:25–0:45 | Cantara: two modules, one platform, Canton party-based privacy |
-| 0:45–1:30 | **Live Vercel URL:** landing → connect Alice → dashboard → send payment |
-| 1:30–2:15 | **Seaport:** package deployed, Payment + Refund contracts, execution log |
-| 2:15–2:45 | Invoice module (UI + on-ledger if done) |
-| 2:45–3:00 | GitHub link, tracks T1+T3, thank you |
+| 0:45–1:30 | **Live URL:** landing → connect Alice → dashboard → send payment |
+| 1:30–2:15 | Multi-send / checkout or Lighthouse tx proof |
+| 2:15–2:45 | Invoice module (UI + on-ledger settle) |
+| 2:45–3:00 | GitHub + tracks T1+T3 + thank you |
 
 ### Recording checklist
 
 - [ ] 1080p screen recording (OBS / Loom)  
 - [ ] Mic clear, no long pauses  
 - [ ] Upload to YouTube (unlisted) or Loom  
-- [ ] Add link to README + submission form  
+- [ ] Add link to README + this doc + Encode form  
 
 ---
 
 ## Workstream E — Presentation
 
 - [ ] `cd docs && node generate-slides.mjs`  
-- [ ] Import `Cantara-Checkpoint-2.pptx` → Google Slides  
-- [ ] Add any new Seaport invoice screenshots  
+- [ ] Import pptx → Google Slides  
+- [ ] Add live URLs + any Lighthouse screenshots  
 - [ ] Share → Anyone with link  
-- [ ] Paste URL in submission form  
+- [ ] Paste URL in submission form + README  
 
 ---
 
 ## Workstream F — Repository polish
 
-- [ ] README: live demo URL, video URL, Seaport/DevNet proof section  
-- [ ] README: final submission links block at top  
-- [ ] `docs/PROGRESS.md` updated with final status  
-- [ ] Remove any secrets (`.env`, PDF credentials) — already gitignored  
-- [ ] Confirm `main` builds: `dpm build`, `frontend npm run build`, `backend npm run build`  
-
-### README snippet to add after deploy
-
-```markdown
-## Live demo
-
-| Resource | URL |
-|----------|-----|
-| App | https://YOUR-APP.vercel.app |
-| API | https://YOUR-API.railway.app |
-| Video | https://youtube.com/... |
-| Deck | https://docs.google.com/presentation/d/... |
-| DevNet | cantara v0.1.0 on 5N Sandbox via Seaport |
-```
+- [x] README: live demo URLs  
+- [x] This checklist updated with live status  
+- [ ] `docs/PROGRESS.md` final pass  
+- [x] No secrets in git (`backend/.env` gitignored)  
+- [ ] Confirm `main` builds: `dpm build`, frontend/backend `npm run build`  
 
 ---
 
 ## Workstream G — Submit on Encode
 
-Final form fields (typical):
-
-- [ ] Public repo URL  
+- [x] Public repo URL  
 - [ ] Presentation URL (Google Slides)  
 - [ ] Video URL  
-- [ ] Live product URL (Vercel)  
+- [x] Live product URL (Vercel)  
 - [ ] Tracks: T1 + T3  
 - [ ] Project image (dashboard screenshot or `cantara.svg`)  
 - [ ] Short description emphasizing DevNet + privacy  
@@ -218,9 +146,8 @@ Final form fields (typical):
 
 | Day | Focus |
 |-----|--------|
-| **Thu 10 Jul** | Seaport: sync daml, deploy, invoice on-ledger demo |
-| **Fri 11 Jul** | Railway/Render API + Vercel frontend, verify full live stack |
-| **Sat 12 Jul** | Record video, finalize deck, README links |
+| **Fri 10 Jul** | ✅ Live stack + smoke |
+| **Sat 11 Jul** | Record video, finalize deck |
 | **Sun 12 Jul** | Buffer: fix bugs, re-record if needed |
 | **Mon 13 Jul** | Submit before 12:59 BST |
 
@@ -229,28 +156,15 @@ Final form fields (typical):
 ## Quick commands reference
 
 ```bash
-# Daml
-export PATH="$HOME/.dpm/bin:$PATH"
-cd cantara && dpm build
+# Health
+curl https://cantara-api-production.up.railway.app/api/health
 
 # Local full stack
 cd cantara/backend && npm run dev    # :3001
 cd cantara/frontend && npm run dev   # :5173
 
-# Frontend production build (same as Vercel)
-cd cantara/frontend && npm run build
-
 # Presentation
 cd cantara/docs && node generate-slides.mjs
-```
-
-### Vercel CLI (optional)
-
-```bash
-npm i -g vercel
-cd cantara/frontend
-vercel          # preview
-vercel --prod   # production
 ```
 
 ---
@@ -259,15 +173,16 @@ vercel --prod   # production
 
 | Risk | Mitigation |
 |------|------------|
-| Live app broken (API down) | Health check `/api/health`; monitor Railway |
-| Judges say “not on DevNet” | Point to Seaport package + execution logs on 5N Sandbox |
-| Demo ledger resets on API restart | Acceptable for hackathon; seed parties on boot (already done) |
-| Only Payment on-ledger | Prioritize one invoice flow this week |
+| Live app broken (API cold start) | Health check; wait ~10s if Get Started stays on Loading |
+| Judges say “not on DevNet” | Point to `mode:canton` + Lighthouse tx/contract links |
+| Shared operator party UX | Labels via party ids (Alice/Bob); note in demo |
+| Deck / video missing | Only blockers left — prioritize Sat |
 
 ---
 
 ## Links
 
+- Live app: https://cantara-hackathon.vercel.app  
 - Seaport: https://app.devnet.seaport.io/encode-hackathon  
 - Seaport Guide: https://github.com/Jatinp26/Seaport-Guide  
 - Encode hackathon: https://forum.canton.network/t/build-on-canton-hackathon/8635  

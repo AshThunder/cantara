@@ -1,6 +1,14 @@
 # Deploy Cantara — Vercel (frontend) + Railway (API → Canton DevNet)
 
-**Live architecture:**
+**Live (production):**
+
+| | URL |
+|--|-----|
+| Frontend | https://cantara-hackathon.vercel.app |
+| API | https://cantara-api-production.up.railway.app |
+| Health | https://cantara-api-production.up.railway.app/api/health |
+
+**Architecture:**
 
 ```
 ┌─────────────────┐     ┌──────────────────┐     ┌─────────────────────┐
@@ -38,7 +46,7 @@ Deploy reads from GitHub `AshThunder/cantara`. Commit and push `main` first (nev
 | `CANTON_CLIENT_SECRET` | *(from 5N PDF — never commit)* |
 | `CANTON_PACKAGE_ID` | `b011f10b002d597291b67192a3c6c036a5ea9c7387726718292833d2c3cf3f58` |
 | `CANTON_OPERATOR_PARTY` | `5nsandbox-devnet-2::1220a14ca128063b8dc9d1ebb0bd22633be9f2168500f4dbc1ecaeb1855b14e5acf8` |
-| `FRONTEND_URL` | `https://YOUR-APP.vercel.app` *(set after Vercel)* |
+| `FRONTEND_URL` / `FRONTEND_URLS` | `https://cantara-hackathon.vercel.app` (comma-separated if multiple) |
 | `SUBSCRIPTION_SCHEDULER` | `true` |
 | `WALLET_OPENING_BALANCE` | `10000` |
 
@@ -47,7 +55,7 @@ Deploy reads from GitHub `AshThunder/cantara`. Commit and push `main` first (nev
 ### Verify API
 
 ```bash
-curl https://YOUR-API.up.railway.app/api/health
+curl https://cantara-api-production.up.railway.app/api/health
 ```
 
 Expect: `"status":"ok","mode":"canton"`.
@@ -70,11 +78,11 @@ Expect: `"status":"ok","mode":"canton"`.
 
 | Key | Value |
 |-----|--------|
-| `VITE_API_URL` | `https://YOUR-API.up.railway.app/api` |
+| `VITE_API_URL` | `https://cantara-api-production.up.railway.app/api` |
 
 Include `/api`. No trailing slash after `api`.
 
-4. Deploy → copy URL → set `FRONTEND_URL` on Railway → redeploy API.
+4. Deploy → copy URL → set `FRONTEND_URL` / `FRONTEND_URLS` on Railway → redeploy API.
 
 Vite bakes env at **build** time — change `VITE_API_URL` ⇒ **Redeploy**.
 
@@ -82,12 +90,12 @@ Vite bakes env at **build** time — change `VITE_API_URL` ⇒ **Redeploy**.
 
 ## Part 4 — Verify live
 
-- [ ] Landing loads (no amber “backend not reachable” banner)
-- [ ] Connect Party → Dashboard
-- [ ] Send payment → Activity + Lighthouse link
-- [ ] Wallet balance updates
-- [ ] Checkout → `/pay/:id`
-- [ ] Invoice propose / accept
+- [x] Landing loads (no amber “backend not reachable” banner)
+- [x] Connect Party → Dashboard
+- [x] Send payment → Activity + Lighthouse link
+- [x] Wallet balance updates
+- [x] Checkout → `/pay/:id`
+- [x] Invoice propose / accept / settle (API smoke)
 
 ---
 

@@ -17,7 +17,7 @@ export function Dashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [wallet, setWallet] = useState<WalletType | null>(null);
-  const [showBalance, setShowBalance] = useState(false);
+  const [showBalance, setShowBalance] = useState(true);
 
   useEffect(() => {
     if (!party) return;

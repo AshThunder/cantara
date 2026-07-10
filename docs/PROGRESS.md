@@ -2,7 +2,7 @@
 
 **Hackathon:** [Build on Canton](https://forum.canton.network/t/build-on-canton-hackathon/8635) by Encode Club  
 **Team repo:** https://github.com/AshThunder/cantara  
-**Last updated:** June 29, 2026
+**Last updated:** July 10, 2026
 
 ---
 
@@ -12,10 +12,10 @@ Cantara is a privacy-first financial platform on Canton Network combining **priv
 
 | Module | Track | Status |
 |--------|-------|--------|
-| Payments | Track 3 — Payments & Neobanking | Daml ✅ · Deployed ✅ · Payment + Refund proven ✅ |
-| Invoices | Track 1 — Private DeFi & Capital Markets | Daml ✅ · Deployed ✅ · **Full lifecycle on Seaport ✅** |
-| Frontend | — | React app ✅ · Vercel deploy pending |
-| Backend | — | Demo REST API ✅ · Railway deploy pending |
+| Payments | Track 3 — Payments & Neobanking | Daml ✅ · DevNet ✅ · live send/refund/multi-send/subs/checkout |
+| Invoices | Track 1 — Private DeFi & Capital Markets | Daml ✅ · full lifecycle on DevNet via API ✅ |
+| Frontend | — | https://cantara-hackathon.vercel.app |
+| Backend | — | https://cantara-api-production.up.railway.app (`mode:canton`) |
 
 ---
 
@@ -36,16 +36,16 @@ Cantara is a privacy-first financial platform on Canton Network combining **priv
 - [x] Exercised **Payment_Refund** → **RefundedPayment** on-ledger
 - [x] **Full invoice lifecycle** on Seaport (Proposal → SettledInvoice)
 
-### In progress
-- [ ] Deploy API to Railway + frontend to Vercel — see [DEPLOY.md](DEPLOY.md)
-- [ ] 3-minute video pitch
-- [ ] Loop Party ID allocation on 5N Sandbox
-- [ ] Backend wired to JSON Ledger API (post-submission)
+### Week 3 — Live product (Jul 2026)
+- [x] Backend wired to Canton JSON Ledger API (`LEDGER_MODE=canton`)
+- [x] Deploy API to Railway + frontend to Vercel — [DEPLOY.md](DEPLOY.md)
+- [x] Subscriptions, multi-send, merchant checkout, wallet, merchant SDK
+- [x] End-to-end smoke on production (UI send + invoice lifecycle)
 
-### Planned
-- [ ] PaymentRequest, Subscription demos on-ledger
-- [ ] Merchant SDK
-- [ ] Production deploy with real party auth
+### Remaining for Encode submit
+- [ ] 3-minute video pitch
+- [ ] Google Slides share link
+- [ ] Optional: distinct Loop parties on 5N Sandbox
 
 ---
 

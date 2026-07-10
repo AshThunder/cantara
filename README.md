@@ -11,6 +11,20 @@ Cantara is a privacy-first financial platform for the [Build on Canton Hackathon
 
 ---
 
+## Live demo
+
+| Resource | URL |
+|----------|-----|
+| **App** | https://cantara-hackathon.vercel.app |
+| **API** | https://cantara-api-production.up.railway.app |
+| **Health** | https://cantara-api-production.up.railway.app/api/health |
+| Video | *(add after recording)* |
+| Deck | *(add Google Slides link)* |
+
+Open the app → **Get Started** (Alice) → Dashboard → Send. API mode is `canton` (5N DevNet).
+
+---
+
 ## Hackathon tracks
 
 | Module | Track | Description |
@@ -27,7 +41,9 @@ Cantara is a privacy-first financial platform for the [Build on Canton Hackathon
 | Package | `cantara` v0.1.0 |
 | Package ID | `b011f10b002d597291b67192a3c6c036a5ea9c7387726718292833d2c3cf3f58` |
 | Validator | 5N Sandbox via [Seaport](https://app.devnet.seaport.io/encode-hackathon) |
-| Proven on-ledger | `Payment` create ✅ · `Payment_Refund` ✅ |
+| Proven on-ledger | `Payment` · `Payment_Refund` · invoice lifecycle (propose → settle) |
+| Frontend | [Vercel](https://cantara-hackathon.vercel.app) |
+| Backend | [Railway](https://cantara-api-production.up.railway.app) → JSON Ledger API |
 
 ---
 
@@ -119,21 +135,27 @@ On Canton, privacy comes from **party-based visibility** in Daml:
 ```
 ┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
 │  React UI   │────▶│  REST API    │────▶│  Canton Ledger  │
-│  frontend/  │     │  backend/    │     │  5N Sandbox     │
+│  Vercel     │     │  Railway     │     │  5N Sandbox     │
 └─────────────┘     └──────────────┘     └─────────────────┘
-                           │                      ▲
-                    demo ledger            JSON Ledger API v2
+                      LEDGER_MODE=canton      JSON Ledger API v2
 ```
+
+Locally, set `LEDGER_MODE=demo` for an in-memory ledger, or `canton` with 5N credentials (see [DEPLOY.md](docs/DEPLOY.md)).
 
 ---
 
-## API endpoints (demo backend)
+## API endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
+| GET | `/api/health` | Health + ledger mode |
 | GET | `/api/parties` | List demo parties |
 | POST | `/api/payments/send` | Send payment |
 | GET | `/api/payments?party=` | List payments |
+| GET | `/api/wallet?party=` | Derived wallet balance |
+| POST | `/api/payments/multi-send` | Batch send |
+| POST | `/api/subscriptions` | Create subscription |
+| POST | `/api/checkout` | Create merchant checkout |
 | GET | `/api/invoices?party=` | List invoices |
 | POST | `/api/invoices` | Create invoice proposal |
 | POST | `/api/invoices/proposals/:id/accept` | Buyer confirms |
