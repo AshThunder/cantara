@@ -12,11 +12,15 @@ const scheduler = canton ? new SubscriptionScheduler(canton) : null;
 const app = express();
 const PORT = Number(process.env.PORT ?? 3001);
 const FRONTEND_URL = process.env.FRONTEND_URL;
+const FRONTEND_URLS = (process.env.FRONTEND_URLS ?? FRONTEND_URL ?? '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: FRONTEND_URL
-      ? [FRONTEND_URL, 'http://localhost:5173', 'http://localhost:5174']
+    origin: FRONTEND_URLS.length
+      ? [...FRONTEND_URLS, 'http://localhost:5173', 'http://localhost:5174']
       : true,
   })
 );
