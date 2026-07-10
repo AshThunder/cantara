@@ -1,0 +1,46 @@
+module Cantara.Payments.PaymentBatch where
+
+import DA.Time
+import Cantara.Payments.Types
+import Cantara.Payments.Payment
+
+-- | Batch payment to multiple recipients (max 10).
+data BatchRecipient = BatchRecipient
+  with
+    recipient : Party
+    amount : Decimal
+    paymentId : Text
+  deriving (Eq, Show)
+
+template PaymentBatchProposal
+  with
+    sender : Party
+    recipients : [BatchRecipient]
+    currency : Text
+    description : Text
+    proposedAt : Time
+  where
+    signatory sender
+
+    ensure length recipients >= 1 && length recipients <= 10
+
+    choice PaymentBatchProposal_Execute : [ContractId Payment]
+      controller sender
+      do
+        now <- getTime
+        mapA
+          (\r -> create Payment with
+            sender
+            recipient = r.recipient
+            details = PaymentDetails with
+              paymentId = r.paymentId
+              amount = r.amount
+              currency
+              description
+            status = PaymentActive
+            createdAt = now)
+          recipients
+
+    choice PaymentBatchProposal_Cancel : ()
+      controller sender
+      do pure ()

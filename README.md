@@ -36,9 +36,13 @@ Cantara is a privacy-first financial platform for the [Build on Canton Hackathon
 ### Payments
 - Private P2P payments (sender/recipient visibility only)
 - Payment requests with shareable links
-- Subscriptions (recurring payments)
+- Subscriptions (recurring payments + auto-charge scheduler)
 - Multi-send (batch up to 10 recipients)
 - Refunds
+- Wallet / neobank balance (opening credit ± payments)
+
+### Merchant SDK
+TypeScript package in `sdk/` — `createCheckout`, `getWallet`, pay URLs for external apps.
 
 ### Invoice financing
 - Supplier submits invoice → buyer confirms
@@ -59,6 +63,7 @@ cantara/
 │       └── Scripts/       # Demo script
 ├── backend/               # TypeScript REST API
 ├── frontend/              # React app (teal & amber theme)
+├── sdk/                   # Merchant SDK (cantara-sdk)
 └── docs/
     ├── PROGRESS.md        # Development log
     └── PRESENTATION.md    # Slide content (deck generated locally)
@@ -140,8 +145,12 @@ On Canton, privacy comes from **party-based visibility** in Daml:
 
 ## Documentation
 
+- [Canton DevNet integration](docs/CANTON-INTEGRATION.md) — wire live API to 5N Sandbox
+- [Deploy guide](docs/DEPLOY.md) — Vercel + Railway step-by-step
+- [Final submission guide](docs/FINAL-SUBMISSION.md) — checklist, video, DevNet
 - [Progress log](docs/PROGRESS.md)
-- [Presentation outline](docs/PRESENTATION.md) — run `cd docs && node generate-slides.mjs` to build `.pptx` locally (not in repo)
+- [Seaport invoice demo](docs/SEAPORT-INVOICE-DEMO.md)
+- [Presentation outline](docs/PRESENTATION.md) — run `cd docs && node generate-slides.mjs` to build `.pptx` locally
 
 ---
 

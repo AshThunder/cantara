@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Send as SendIcon, Shield, Check } from 'lucide-react';
+import { ArrowLeft, Send as SendIcon, Shield, Check, ExternalLink } from 'lucide-react';
 import { Header, Footer } from '@/components/layout';
 import { Button, Card, Input } from '@/components/ui';
 import { useParty } from '@/providers/PartyProvider';
-import { api } from '@/lib/api';
+import { api, type Payment } from '@/lib/api';
+import { formatId, lighthouseContractUrl, lighthouseTxUrl } from '@/lib/utils';
 
 type Step = 'recipient' | 'amount' | 'confirm' | 'success';
 
@@ -17,6 +18,7 @@ export function Send() {
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState<Payment | null>(null);
 
   const recipientParty = parties.find((p) => p.id === recipient);
 
@@ -24,13 +26,14 @@ export function Send() {
     if (!party) return;
     setLoading(true);
     try {
-      await api.sendPayment({
+      const payment = await api.sendPayment({
         sender: party.id,
         recipient,
         amount: parseFloat(amount),
         currency: 'USD',
         description: note || 'Payment',
       });
+      setSent(payment);
       toast.success(`Payment sent to ${recipientParty?.displayName}`);
       setStep('success');
     } catch (e) {
@@ -56,8 +59,38 @@ export function Send() {
                   <Check className="w-8 h-8 text-green-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-cantara-deep mb-2">Payment Sent</h2>
-                <p className="text-gray-500 mb-8">${amount} sent privately to {recipientParty?.displayName}</p>
-                <Link to="/dashboard"><Button className="w-full">Back to Dashboard</Button></Link>
+                <p className="text-gray-500 mb-6">${amount} sent privately to {recipientParty?.displayName}</p>
+                {sent && (
+                  <div className="text-left bg-cantara-mint rounded-xl p-4 mb-6 space-y-2 text-sm font-mono">
+                    {sent.updateId && (
+                      <a
+                        href={lighthouseTxUrl(sent.updateId)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center justify-between gap-2 text-cantara-deep hover:text-cantara-teal"
+                      >
+                        <span>Tx {formatId(sent.updateId)}</span>
+                        <ExternalLink className="w-4 h-4 shrink-0" />
+                      </a>
+                    )}
+                    <a
+                      href={lighthouseContractUrl(sent.contractId)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center justify-between gap-2 text-cantara-deep hover:text-cantara-teal"
+                    >
+                      <span>Contract {formatId(sent.contractId)}</span>
+                      <ExternalLink className="w-4 h-4 shrink-0" />
+                    </a>
+                    <p className="text-xs text-gray-500 font-sans pt-1">
+                      Opens in 5N Lighthouse (DevNet explorer)
+                    </p>
+                  </div>
+                )}
+                <div className="flex flex-col gap-3">
+                  <Link to="/activity"><Button className="w-full">View Activity</Button></Link>
+                  <Link to="/dashboard"><Button variant="outline" className="w-full">Back to Dashboard</Button></Link>
+                </div>
               </Card>
             </motion.div>
           ) : (

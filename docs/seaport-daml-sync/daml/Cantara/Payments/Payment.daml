@@ -1,0 +1,40 @@
+module Cantara.Payments.Payment where
+
+import DA.Time
+import Cantara.Payments.Types
+
+-- | Tracked private payment between two parties.
+-- Amount is visible only to sender and recipient.
+template Payment
+  with
+    sender : Party
+    recipient : Party
+    details : PaymentDetails
+    status : PaymentStatus
+    createdAt : Time
+  where
+    signatory sender
+    observer recipient
+
+    ensure status == PaymentActive
+
+    choice Payment_Refund : ContractId RefundedPayment
+      controller recipient
+      do
+        now <- getTime
+        create RefundedPayment with
+          sender
+          recipient
+          details
+          refundedAt = now
+
+-- | Record of a refunded payment.
+template RefundedPayment
+  with
+    sender : Party
+    recipient : Party
+    details : PaymentDetails
+    refundedAt : Time
+  where
+    signatory sender
+    observer recipient

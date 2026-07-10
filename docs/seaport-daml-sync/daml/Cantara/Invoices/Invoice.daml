@@ -1,0 +1,101 @@
+module Cantara.Invoices.Invoice where
+
+import DA.Time
+import DA.Assert (assertWithinDeadline, assertDeadlineExceeded)
+import Cantara.Invoices.Types
+import Cantara.Invoices.Financing
+
+-- | Supplier submits an invoice for buyer confirmation.
+-- Only supplier and buyer can see the full invoice details.
+template InvoiceProposal
+  with
+    supplier : Party
+    buyer : Party
+    details : InvoiceDetails
+    submittedAt : Time
+  where
+    signatory supplier
+    observer buyer
+
+    choice InvoiceProposal_Accept : ContractId Invoice
+      controller buyer
+      do
+        now <- getTime
+        create Invoice with
+          supplier
+          buyer
+          details
+          confirmedAt = now
+
+    choice InvoiceProposal_Reject : ()
+      with
+        reason : Text
+      controller buyer
+      do pure ()
+
+    choice InvoiceProposal_Withdraw : ()
+      controller supplier
+      do pure ()
+
+-- | Confirmed invoice ready for private financing.
+template Invoice
+  with
+    supplier : Party
+    buyer : Party
+    details : InvoiceDetails
+    confirmedAt : Time
+  where
+    signatory supplier, buyer
+
+    choice Invoice_Attest : ContractId AttestedInvoice
+      with
+        financier : Party
+      controller buyer
+      do
+        now <- getTime
+        create AttestedInvoice with
+          supplier
+          buyer
+          financier
+          details
+          confirmedAt
+          attestedAt = now
+
+-- | Invoice attested by buyer and shared with a specific financier.
+template AttestedInvoice
+  with
+    supplier : Party
+    buyer : Party
+    financier : Party
+    details : InvoiceDetails
+    confirmedAt : Time
+    attestedAt : Time
+  where
+    signatory supplier, buyer
+    observer financier
+
+    choice AttestedInvoice_SubmitOffer : ContractId FinancingOffer
+      with
+        terms : FinancingTerms
+        offerId : Text
+        validUntil : Time
+      controller financier
+      do
+        now <- getTime
+        assertWithinDeadline "validUntil" validUntil
+        assertDeadlineExceeded "attestedAt" attestedAt
+        create FinancingOffer with
+          supplier
+          buyer
+          financier
+          invoiceId = details.invoiceId
+          invoiceAmount = details.amount
+          invoiceCurrency = details.currency
+          terms
+          offerId
+          validUntil
+          offeredAt = now
+
+    choice AttestedInvoice_RevokeAttestation : ()
+      controller buyer
+      do pure ()

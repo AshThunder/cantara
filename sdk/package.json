@@ -1,0 +1,24 @@
+{
+  "name": "cantara-sdk",
+  "version": "0.1.0",
+  "description": "Merchant SDK for Cantara private payments on Canton",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc",
+    "example": "node examples/checkout.mjs"
+  },
+  "keywords": ["canton", "daml", "payments", "cantara", "merchant"],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}

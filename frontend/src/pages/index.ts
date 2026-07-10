@@ -1,7 +1,13 @@
 export { Landing } from './Landing';
 export { Dashboard } from './Dashboard';
 export { Send } from './Send';
+export { Request } from './Request';
+export { Refunds } from './Refunds';
+export { Subscriptions } from './Subscriptions';
+export { MultiSend } from './MultiSend';
+export { Checkout } from './Checkout';
+export { Pay } from './Pay';
+export { WalletPage } from './Wallet';
 export { Invoices } from './Invoices';
 export { InvoiceNew } from './InvoiceNew';
 export { Activity } from './Activity';
-export { Request, Business, Subscriptions, Refunds, MultiSend, Checkout, Pay } from './StubPages';

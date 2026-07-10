@@ -14,6 +14,10 @@ export type Payment = {
   description: string;
   status: 'active' | 'refunded';
   createdAt: string;
+  /** Canton ledger update ID (transaction id) when known */
+  updateId?: string;
+  /** Ledger offset when known */
+  offset?: number;
 };
 
 export type PaymentRequest = {
@@ -26,6 +30,27 @@ export type PaymentRequest = {
   createdAt: string;
   expiresAt: string;
   fulfilled: boolean;
+};
+
+export type Subscription = {
+  contractId: string;
+  subscriber: string;
+  recipient: string;
+  amount: number;
+  currency: string;
+  description: string;
+  subscriptionId: string;
+  intervalDays: number;
+  nextPaymentAt: string;
+  active: boolean;
+  createdAt: string;
+  updateId?: string;
+};
+
+export type BatchPaymentResult = {
+  payments: Payment[];
+  updateId?: string;
+  offset?: number;
 };
 
 export type InvoiceProposal = {

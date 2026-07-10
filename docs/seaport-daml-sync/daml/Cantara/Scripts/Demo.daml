@@ -1,0 +1,106 @@
+module Cantara.Scripts.Demo where
+
+import Daml.Script
+import DA.Time
+import Cantara.Payments.Payment
+import Cantara.Payments.PaymentRequest
+import Cantara.Payments.Subscription
+import Cantara.Payments.Types
+import Cantara.Invoices.Invoice
+import Cantara.Invoices.Types
+import Cantara.Invoices.Financing
+
+demo : Script ()
+demo = script do
+  alice <- allocateParty "Alice"
+  bob <- allocateParty "Bob"
+  carol <- allocateParty "Carol"
+  financier <- allocateParty "Financier"
+
+  now <- getTime
+
+  -- Payment: Alice sends Bob 100 USD
+  paymentCid <- submit alice do
+    createCmd Payment with
+      sender = alice
+      recipient = bob
+      details = PaymentDetails with
+        paymentId = "pay-001"
+        amount = 100.0
+        currency = "USD"
+        description = "Lunch"
+      status = PaymentActive
+      createdAt = now
+
+  submit bob do
+    exerciseCmd paymentCid Payment_Refund
+
+  -- Payment request: Carol requests, Bob pays
+  requestCid <- submit carol do
+    createCmd PaymentRequest with
+      requester = carol
+      requestId = "req-001"
+      amount = FixedAmount 50.0
+      currency = "USD"
+      description = "Design work"
+      createdAt = now
+      expiresAt = addRelTime now (days 7)
+
+  submit bob do
+    exerciseCmd requestCid PaymentRequest_Fulfill with
+      payer = bob
+      paidAmount = 50.0
+      paymentId = "pay-002"
+
+  -- Subscription: Alice pays Carol monthly
+  subCid <- submitMulti [alice, carol] [] do
+    createCmd Subscription with
+      subscriber = alice
+      recipient = carol
+      amount = 9.99
+      currency = "USD"
+      description = "Pro plan"
+      subscriptionId = "sub-001"
+      interval = days 30
+      nextPaymentAt = now
+      active = True
+      createdAt = now
+
+  submit alice do
+    exerciseCmd subCid Subscription_Execute with paymentId = "pay-003"
+
+  -- Invoice financing workflow
+  proposalCid <- submit alice do
+    createCmd InvoiceProposal with
+      supplier = alice
+      buyer = bob
+      details = InvoiceDetails with
+        invoiceId = "inv-001"
+        description = "Office supplies"
+        amount = 5000.0
+        currency = "USD"
+        dueDate = addRelTime now (days 60)
+      submittedAt = now
+
+  invoiceCid <- submit bob do
+    exerciseCmd proposalCid InvoiceProposal_Accept
+
+  attestedCid <- submit bob do
+    exerciseCmd invoiceCid Invoice_Attest with financier
+
+  offerCid <- submit financier do
+    exerciseCmd attestedCid AttestedInvoice_SubmitOffer with
+      terms = FinancingTerms with
+        advanceRate = 0.85
+        discountFee = 0.03
+        currency = "USD"
+      offerId = "offer-001"
+      validUntil = addRelTime now (days 14)
+
+  financedCid <- submit alice do
+    exerciseCmd offerCid FinancingOffer_Accept
+
+  submit bob do
+    exerciseCmd financedCid FinancedInvoice_Settle
+
+  pure ()

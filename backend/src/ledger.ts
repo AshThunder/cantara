@@ -247,5 +247,3 @@ export class Ledger {
     };
   }
 }
-
-export const ledger = new Ledger();

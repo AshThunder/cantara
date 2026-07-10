@@ -13,9 +13,9 @@ Cantara is a privacy-first financial platform on Canton Network combining **priv
 | Module | Track | Status |
 |--------|-------|--------|
 | Payments | Track 3 — Payments & Neobanking | Daml ✅ · Deployed ✅ · Payment + Refund proven ✅ |
-| Invoices | Track 1 — Private DeFi & Capital Markets | Daml ✅ · Deployed ✅ · UI ready · On-ledger demo pending |
-| Frontend | — | React app with teal/amber theme ✅ |
-| Backend | — | Demo REST API ✅ · Sandbox API wiring pending |
+| Invoices | Track 1 — Private DeFi & Capital Markets | Daml ✅ · Deployed ✅ · **Full lifecycle on Seaport ✅** |
+| Frontend | — | React app ✅ · Vercel deploy pending |
+| Backend | — | Demo REST API ✅ · Railway deploy pending |
 
 ---
 
@@ -34,12 +34,13 @@ Cantara is a privacy-first financial platform on Canton Network combining **priv
 - [x] Deployed DAR to **5N Sandbox** validator
 - [x] Created live **Payment** contract on Canton
 - [x] Exercised **Payment_Refund** → **RefundedPayment** on-ledger
+- [x] **Full invoice lifecycle** on Seaport (Proposal → SettledInvoice)
 
 ### In progress
-- [ ] Full invoice workflow demo on Seaport
+- [ ] Deploy API to Railway + frontend to Vercel — see [DEPLOY.md](DEPLOY.md)
+- [ ] 3-minute video pitch
 - [ ] Loop Party ID allocation on 5N Sandbox
-- [ ] Backend wired to JSON Ledger API
-- [ ] Checkpoint 2 submission
+- [ ] Backend wired to JSON Ledger API (post-submission)
 
 ### Planned
 - [ ] PaymentRequest, Subscription demos on-ledger

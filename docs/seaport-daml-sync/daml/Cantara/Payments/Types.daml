@@ -1,0 +1,24 @@
+module Cantara.Payments.Types where
+
+import DA.Time
+
+-- | Lifecycle status of a tracked payment.
+data PaymentStatus
+  = PaymentActive
+  | PaymentRefunded
+  deriving (Eq, Show)
+
+-- | Shared payment metadata.
+data PaymentDetails = PaymentDetails
+  with
+    paymentId : Text
+    amount : Decimal
+    currency : Text
+    description : Text
+  deriving (Eq, Show)
+
+-- | Request can specify a fixed amount or allow any amount.
+data RequestAmount
+  = FixedAmount Decimal
+  | AnyAmount
+  deriving (Eq, Show)

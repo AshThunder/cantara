@@ -1,0 +1,88 @@
+module Cantara.Invoices.Financing where
+
+import DA.Assert (assertWithinDeadline)
+import Cantara.Invoices.Types
+
+-- | Confidential financing offer from financier to supplier.
+-- Terms are visible only to supplier and financier; buyer sees status only.
+template FinancingOffer
+  with
+    supplier : Party
+    buyer : Party
+    financier : Party
+    invoiceId : Text
+    invoiceAmount : Decimal
+    invoiceCurrency : Text
+    terms : FinancingTerms
+    offerId : Text
+    validUntil : Time
+    offeredAt : Time
+  where
+    signatory financier
+    observer supplier
+
+    choice FinancingOffer_Accept : ContractId FinancedInvoice
+      controller supplier
+      do
+        now <- getTime
+        assertWithinDeadline "validUntil" validUntil
+        create FinancedInvoice with
+          supplier
+          buyer
+          financier
+          invoiceId
+          invoiceAmount
+          invoiceCurrency
+          terms
+          financedAt = now
+
+    choice FinancingOffer_Reject : ()
+      with
+        reason : Text
+      controller supplier
+      do pure ()
+
+    choice FinancingOffer_Withdraw : ()
+      controller financier
+      do pure ()
+
+-- | Active financing agreement awaiting buyer settlement.
+template FinancedInvoice
+  with
+    supplier : Party
+    buyer : Party
+    financier : Party
+    invoiceId : Text
+    invoiceAmount : Decimal
+    invoiceCurrency : Text
+    terms : FinancingTerms
+    financedAt : Time
+  where
+    signatory supplier, financier
+    observer buyer
+
+    choice FinancedInvoice_Settle : ContractId SettledInvoice
+      controller buyer
+      do
+        now <- getTime
+        create SettledInvoice with
+          supplier
+          buyer
+          financier
+          invoiceId
+          invoiceAmount
+          invoiceCurrency
+          settledAt = now
+
+-- | Settlement record visible to all three parties.
+template SettledInvoice
+  with
+    supplier : Party
+    buyer : Party
+    financier : Party
+    invoiceId : Text
+    invoiceAmount : Decimal
+    invoiceCurrency : Text
+    settledAt : Time
+  where
+    signatory supplier, buyer, financier

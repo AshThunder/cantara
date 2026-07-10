@@ -1,0 +1,49 @@
+module Cantara.Payments.Subscription where
+
+import DA.Time
+import DA.Assert (assertDeadlineExceeded)
+import Cantara.Payments.Types
+import Cantara.Payments.Payment
+
+-- | Recurring payment authorization between subscriber and recipient.
+template Subscription
+  with
+    subscriber : Party
+    recipient : Party
+    amount : Decimal
+    currency : Text
+    description : Text
+    subscriptionId : Text
+    interval : RelTime
+    nextPaymentAt : Time
+    active : Bool
+    createdAt : Time
+  where
+    signatory subscriber, recipient
+
+    ensure active
+
+    choice Subscription_Execute : (ContractId Payment, ContractId Subscription)
+      with
+        paymentId : Text
+      controller subscriber
+      do
+        now <- getTime
+        assertDeadlineExceeded "nextPaymentAt" nextPaymentAt
+        paymentCid <- create Payment with
+          sender = subscriber
+          recipient
+          details = PaymentDetails with
+            paymentId
+            amount
+            currency
+            description
+          status = PaymentActive
+          createdAt = now
+        nextCid <- create this with
+          nextPaymentAt = nextPaymentAt `addRelTime` interval
+        pure (paymentCid, nextCid)
+
+    choice Subscription_Cancel : ()
+      controller subscriber
+      do pure ()
