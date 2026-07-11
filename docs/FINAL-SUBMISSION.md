@@ -31,7 +31,7 @@ Canton Foundation (Jatin): *no Testnet; use Seaport on provided 5N DevNet.*
 | # | Requirement | Status | Owner / notes |
 |---|-------------|--------|----------------|
 | 1 | Public repository | ✅ Done | https://github.com/AshThunder/cantara |
-| 2 | Presentation deck | 🟡 Local | `cd docs && node generate-slides.mjs` → Google Slides → share link |
+| 2 | Presentation deck | 🟡 Local pptx | `docs/Cantara-Final.pptx` ready — upload to Google Slides → share link |
 | 3 | 3‑minute video pitch + demo | ❌ Todo | Script below — use live Vercel URL |
 | 4 | Link to live product | ✅ Done | https://cantara-hackathon.vercel.app |
 | 5 | Deployed on Canton DevNet | ✅ Done | Payments + refunds + full invoice lifecycle via Railway → 5N |
@@ -112,9 +112,8 @@ CORS via `FRONTEND_URLS` including the Vercel origin.
 
 ## Workstream E — Presentation
 
-- [ ] `cd docs && node generate-slides.mjs`  
+- [x] `cd docs && node generate-slides.mjs` → `Cantara-Final.pptx`  
 - [ ] Import pptx → Google Slides  
-- [ ] Add live URLs + any Lighthouse screenshots  
 - [ ] Share → Anyone with link  
 - [ ] Paste URL in submission form + README  
 

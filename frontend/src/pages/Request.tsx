@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Link2 } from 'lucide-react';
+import { ArrowLeft, Link2, Copy, Check } from 'lucide-react';
 import { Header, Footer } from '@/components/layout';
 import { Button, Card, Input } from '@/components/ui';
 import { useParty } from '@/providers/PartyProvider';
@@ -14,6 +14,9 @@ export function Request() {
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(false);
   const [requests, setRequests] = useState<PaymentRequest[]>([]);
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const payUrl = (contractId: string) => `${window.location.origin}/pay/${contractId}`;
 
   const load = () => {
     if (!party) return;
@@ -21,6 +24,12 @@ export function Request() {
   };
 
   useEffect(load, [party]);
+
+  const copyLink = async (contractId: string) => {
+    await navigator.clipboard.writeText(payUrl(contractId));
+    setCopied(contractId);
+    toast.success('Pay link copied');
+  };
 
   const handleCreate = async () => {
     if (!party) return;
@@ -31,7 +40,7 @@ export function Request() {
     }
     setLoading(true);
     try {
-      await api.createPaymentRequest({
+      const req = await api.createPaymentRequest({
         requester: party.id,
         amount: parsed,
         currency: 'USD',
@@ -41,6 +50,9 @@ export function Request() {
       setAmount('');
       setNote('');
       load();
+      await navigator.clipboard.writeText(payUrl(req.contractId));
+      setCopied(req.contractId);
+      toast.success('Pay link copied');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Failed to create request');
     } finally {
@@ -63,7 +75,7 @@ export function Request() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-cantara-deep">Request Money</h1>
-              <p className="text-sm text-gray-500">Creates a PaymentRequest contract on DevNet</p>
+              <p className="text-sm text-gray-500">Creates a shareable /pay link on DevNet</p>
             </div>
           </div>
 
@@ -93,19 +105,30 @@ export function Request() {
             <p className="p-6 text-center text-gray-500 text-sm">No open requests yet.</p>
           ) : (
             requests.map((r) => (
-              <div key={r.contractId} className="p-4">
-                <p className="font-medium text-cantara-deep">{r.description}</p>
-                <p className="text-sm text-gray-500">
-                  {r.amount != null ? `$${r.amount.toFixed(2)}` : 'Any amount'} · {r.requestId}
-                </p>
-                <a
-                  href={lighthouseContractUrl(r.contractId)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-xs font-mono text-cantara-teal hover:underline"
-                >
-                  {formatId(r.contractId)}
-                </a>
+              <div key={r.contractId} className="p-4 flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-cantara-deep">{r.description}</p>
+                  <p className="text-sm text-gray-500">
+                    {r.amount != null ? `$${r.amount.toFixed(2)}` : 'Any amount'} · {r.requestId}
+                  </p>
+                  <p className="text-xs font-mono text-cantara-teal truncate mt-1">
+                    /pay/{formatId(r.contractId)}
+                  </p>
+                  <a
+                    href={lighthouseContractUrl(r.contractId)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-gray-400 hover:text-cantara-teal hover:underline"
+                  >
+                    Lighthouse {formatId(r.contractId)}
+                  </a>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => copyLink(r.contractId)} aria-label="Copy pay link">
+                  {copied === r.contractId ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                </Button>
+                <Link to={`/pay/${r.contractId}`}>
+                  <Button size="sm">Open</Button>
+                </Link>
               </div>
             ))
           )}
