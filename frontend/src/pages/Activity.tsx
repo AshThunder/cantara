@@ -1,27 +1,62 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ArrowDownLeft, ExternalLink } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Header, Footer } from '@/components/layout';
-import { Card } from '@/components/ui';
+import { Button, Card } from '@/components/ui';
 import { useParty } from '@/providers/PartyProvider';
 import { api, type Payment } from '@/lib/api';
 import { formatId, lighthouseContractUrl, lighthouseTxUrl } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+const PAGE_SIZE = 10;
+
+function formatPaymentDate(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
 export function Activity() {
   const { party } = useParty();
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (!party) return;
+    setPage(1);
     api.getPayments(party.id).then(setPayments).catch(console.error);
   }, [party]);
+
+  const sorted = useMemo(
+    () =>
+      [...payments].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      ),
+    [payments]
+  );
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageItems = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-cantara-mint to-white">
       <Header />
       <main className="flex-1 container mx-auto px-6 max-w-3xl py-8">
         <div className="flex items-end justify-between gap-4 mb-8">
-          <h1 className="text-3xl font-bold text-cantara-deep">Activity</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-cantara-deep">Activity</h1>
+            {sorted.length > 0 && (
+              <p className="text-sm text-gray-500 mt-1">
+                {sorted.length} payment{sorted.length === 1 ? '' : 's'} · newest first
+              </p>
+            )}
+          </div>
           <a
             href="https://lighthouse.devnet.cantonloop.com/contracts"
             target="_blank"
@@ -32,10 +67,10 @@ export function Activity() {
           </a>
         </div>
         <Card className="divide-y divide-cantara-mint">
-          {payments.length === 0 ? (
+          {sorted.length === 0 ? (
             <p className="p-8 text-center text-gray-500">No payments yet.</p>
           ) : (
-            payments.map((p) => {
+            pageItems.map((p) => {
               const isSent = p.sender === party?.id;
               return (
                 <div key={p.contractId} className="p-4 flex items-start gap-4">
@@ -45,6 +80,7 @@ export function Activity() {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-cantara-deep">{p.description}</p>
                     <p className="text-sm text-gray-500">{isSent ? 'To' : 'From'} {isSent ? p.recipient : p.sender}</p>
+                    <p className="text-xs text-gray-400 mt-1">{formatPaymentDate(p.createdAt)}</p>
                     <div className="mt-2 space-y-1 text-xs font-mono text-gray-500">
                       {p.updateId && (
                         <a
@@ -81,6 +117,31 @@ export function Activity() {
             })
           )}
         </Card>
+
+        {sorted.length > PAGE_SIZE && (
+          <div className="flex items-center justify-between gap-4 mt-6">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              <ChevronLeft className="w-4 h-4 mr-1" /> Previous
+            </Button>
+            <p className="text-sm text-gray-500">
+              Page {currentPage} of {totalPages}
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Next <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        )}
+
         <Link to="/dashboard" className="block text-center mt-6 text-cantara-teal hover:underline">Back to Dashboard</Link>
       </main>
       <Footer />

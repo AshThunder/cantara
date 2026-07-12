@@ -15,7 +15,7 @@ export function Footer() {
               <span className="text-xl font-bold text-cantara-teal-light tracking-tight">CANTARA</span>
             </div>
             <p className="text-sm text-white/55 max-w-sm leading-relaxed">
-              Private payments and trade finance on Canton. Party-based privacy with Daml — not public-chain encryption theater.
+              Private payments and trade finance on Canton. Party-based privacy with Daml — only contract parties see the data.
             </p>
           </div>
 

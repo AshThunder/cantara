@@ -148,11 +148,11 @@ addContentSlide(
   'Why Canton — privacy is a first-class primitive',
   [
     'Daml defines who sees what: signatories, observers, controllers',
-    'Multi-party workflows are native — not bolted on with ZK or off-chain DBs',
+    'Multi-party workflows are native in Daml',
     'Institutional validators (5N Sandbox DevNet via Seaport)',
     'We deployed cantara-0.1.0.dar and exercise real choices on-ledger — live today',
   ],
-  'Privacy by party membership beats encryption on a transparent chain for B2B finance.'
+  'Privacy by party membership — only authorized parties see payment and invoice data.'
 );
 
 // 4 — Solution

@@ -16,7 +16,7 @@
 | 3 | **Product** | One app: private payments + invoice financing |
 | 4 | **Track 3** | Send, refund, requests, subscriptions, multi-send, checkout, wallet |
 | 5 | **Track 1** | Invoice: propose → accept → attest → offer → settle |
-| 6 | **Privacy model** | Not FHE on a public L1 — selective disclosure by party membership |
+| 6 | **Privacy model** | Selective disclosure by party membership in Daml |
 | 7 | **DevNet proof** | Live on 5N Sandbox; `mode: canton`; Lighthouse tx/contract links |
 | 8 | **Architecture** | Vercel UI → Railway API → Canton JSON Ledger API |
 | 9 | **Live demo** | Show the product working, not slides only |
@@ -36,7 +36,7 @@
 
 ### 0:25–0:45 — Why Canton + what we built
 
-> We chose Canton because privacy is built into Daml: **signatories and observers** decide who sees a payment amount or a financing offer — not encryption bolted onto a transparent ledger.
+> We chose Canton because privacy is built into Daml: **signatories and observers** decide who sees a payment amount or a financing offer.
 >
 > We’re submitting to **two tracks**: **Payments** and **Private DeFi**. Same privacy model, one product.
 
@@ -106,7 +106,7 @@ Private payments + invoice financing on Canton DevNet. Live Vercel app, Railway 
 
 ## 30‑second backup (if cut short)
 
-> Cantara brings private payments and invoice financing to Canton. Privacy is party-based in Daml — not public-chain encryption theater. We’re live on 5N DevNet: send payments, refunds, and a full supplier–buyer–financier invoice flow. App: cantara-hackathon.vercel.app. Tracks T3 and T1.
+> Cantara brings private payments and invoice financing to Canton. Privacy is party-based in Daml — amounts visible only to contract parties. We’re live on 5N DevNet: send payments, refunds, and a full supplier–buyer–financier invoice flow. App: cantara-hackathon.vercel.app. Tracks T3 and T1.
 
 ---
 
@@ -114,7 +114,7 @@ Private payments + invoice financing on Canton DevNet. Live Vercel app, Railway 
 
 | Question | Answer |
 |----------|--------|
-| Is this FHE / encrypted L1? | No — **Canton party visibility**. Only parties on the contract see the payload. |
+| How does privacy work? | **Canton party visibility** in Daml. Only parties on the contract see the payload. |
 | Is it really on DevNet? | Yes — Railway health returns `mode: "canton"`; UI links to **5N Lighthouse**. |
 | Why one operator party for Alice/Bob? | Sandbox shared operator for the hackathon; UI labels parties; real multi-party Loop allocation is next. |
 | What’s on-ledger vs demo? | Payments, refunds, invoices go through the **JSON Ledger API**. Wallet balance is **derived** (opening ± payments), not a separate Wallet Daml template. |

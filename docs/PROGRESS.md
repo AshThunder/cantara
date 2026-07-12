@@ -100,7 +100,7 @@ Cantara.Invoices
 
 ## Privacy model
 
-Canton uses **party-based visibility** — not public-chain transparency or FHE:
+Canton uses **party-based visibility**:
 
 - Payment amounts: visible to **sender** and **recipient** only
 - Financing terms: visible to **supplier** and **financier** only

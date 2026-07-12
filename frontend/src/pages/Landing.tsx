@@ -483,7 +483,7 @@ export function Landing() {
             How privacy works
           </h2>
           <p className="text-gray-500 text-center max-w-2xl mx-auto mb-14">
-            Canton party-based visibility in Daml — not FHE on a public L1.
+            Canton party-based visibility in Daml — amounts stay between contract parties.
           </p>
           <div className="grid md:grid-cols-3 gap-8">
             {[
