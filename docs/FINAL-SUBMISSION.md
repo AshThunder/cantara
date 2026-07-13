@@ -17,8 +17,8 @@ Canton Foundation (Jatin): *no Testnet; use Seaport on provided 5N DevNet.*
 | **API** | https://cantara-api-production.up.railway.app |
 | **Health** | https://cantara-api-production.up.railway.app/api/health → `mode: "canton"` |
 | **Repo** | https://github.com/AshThunder/cantara |
-| **Video** | *(record Sat 11–12 Jul — paste YouTube/Loom here)* |
-| **Deck** | *(Google Slides share link — paste here)* |
+| **Video** | ✅ Edited locally — upload YouTube/Loom → paste URL here + README |
+| **Deck** | ✅ [Google Slides](https://docs.google.com/presentation/d/1grlqa0Dv2jX9DAKMiLxVaK2QJThOw_-r1N6VaXO84F4/edit?usp=sharing) |
 | **DevNet** | `cantara` v0.1.0 on 5N Sandbox via Seaport |
 
 **Package ID:** `b011f10b002d597291b67192a3c6c036a5ea9c7387726718292833d2c3cf3f58`  
@@ -31,12 +31,12 @@ Canton Foundation (Jatin): *no Testnet; use Seaport on provided 5N DevNet.*
 | # | Requirement | Status | Owner / notes |
 |---|-------------|--------|----------------|
 | 1 | Public repository | ✅ Done | https://github.com/AshThunder/cantara |
-| 2 | Presentation deck | 🟡 Local pptx | `docs/Cantara-Final.pptx` ready — upload to Google Slides → share link |
-| 3 | 3‑minute video pitch + demo | ❌ Todo | Script below — use live Vercel URL |
+| 2 | Presentation deck | ✅ Done | [Google Slides](https://docs.google.com/presentation/d/1grlqa0Dv2jX9DAKMiLxVaK2QJThOw_-r1N6VaXO84F4/edit?usp=sharing) |
+| 3 | 3‑minute video pitch + demo | 🟡 Edited | Upload to YouTube (unlisted) or Loom → paste URL in Encode + README |
 | 4 | Link to live product | ✅ Done | https://cantara-hackathon.vercel.app |
 | 5 | Deployed on Canton DevNet | ✅ Done | Payments + refunds + full invoice lifecycle via Railway → 5N |
 
-**Definition of done:** Rows 2–3 green before Monday 12:59 BST (1, 4, 5 already green).
+**Definition of done:** Rows 2–3 green (public links) before Monday 12:59 BST.
 
 ---
 

@@ -174,7 +174,7 @@ addContentSlide(
   [
     `React UI on Vercel — ${LIVE_APP}`,
     `Express API on Railway — LEDGER_MODE=canton → JSON Ledger API v2`,
-    'Daml: 12 templates in cantara-0.1.0.dar on 5N Sandbox',
+    'Daml cantara 0.1.0 on 5N — payments, refunds, subscriptions, invoice financing on-ledger; app adds multi-send, checkout, wallet, SDK',
     `Package ID ${PACKAGE_ID.slice(0, 16)}…${PACKAGE_ID.slice(-8)}`,
   ],
   'Health: /api/health → mode: "canton"'

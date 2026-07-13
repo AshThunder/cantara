@@ -2,6 +2,8 @@
 
 Accept **private Canton payments** from any Node/TypeScript app — without embedding the Cantara UI.
 
+Creates a **PaymentRequest** on DevNet via the Cantara API and returns a customer **pay URL** (`/pay/:contractId`).
+
 ## Install
 
 ```bash
@@ -10,15 +12,15 @@ cd sdk && npm install && npm run build
 npm install /path/to/cantara/sdk
 ```
 
-## Quick start
+## Quick start (live DevNet)
 
 ```ts
 import { Cantara } from 'cantara-sdk';
 
 const cantara = new Cantara({
-  apiUrl: 'http://localhost:3001/api',
+  apiUrl: 'https://cantara-api-production.up.railway.app/api',
   merchant: 'Carol',
-  payBaseUrl: 'http://localhost:5173',
+  payBaseUrl: 'https://cantara-hackathon.vercel.app',
 });
 
 const checkout = await cantara.createCheckout({
@@ -27,8 +29,21 @@ const checkout = await cantara.createCheckout({
 });
 
 console.log(checkout.payUrl);
-// → http://localhost:5173/pay/<contractId>
-// Redirect the customer there to pay privately on Canton.
+// → https://cantara-hackathon.vercel.app/pay/<contractId>
+// Customer opens that link, connects a party, and pays on Canton.
+```
+
+## How it works
+
+1. Your app calls `createCheckout` → API creates a Daml **PaymentRequest** (merchant = requester).
+2. SDK returns `payUrl` pointing at the Cantara frontend pay page.
+3. Customer opens the link, picks a party (e.g. Alice), pays → ledger **Payment** created.
+4. Optional: `listCheckouts()`, `getWallet()`, `fulfillCheckout()` for tests.
+
+```
+Your store  →  cantara-sdk  →  Railway API  →  5N Sandbox
+                              ↓
+                    payUrl → Vercel /pay/:id
 ```
 
 ## API
@@ -38,12 +53,17 @@ console.log(checkout.payUrl);
 | `createCheckout({ amount, description? })` | Create PaymentRequest + pay URL |
 | `listCheckouts()` | Open checkouts for merchant |
 | `fulfillCheckout(id, payer, amount)` | Programmatic fulfill (tests) |
-| `getWallet()` | Merchant neobank balance |
-| `health()` | API health |
+| `getWallet()` | Merchant balance |
+| `health()` | API health (`mode: canton` on DevNet) |
 
-## Example
+## Example against production
 
 ```bash
-# API must be running on :3001
-npm run example
+cd sdk
+npm run build
+CANTARA_API_URL=https://cantara-api-production.up.railway.app/api \
+CANTARA_PAY_BASE=https://cantara-hackathon.vercel.app \
+node examples/checkout.mjs
 ```
+
+Local API instead: leave env unset (defaults to `http://localhost:3001/api`).

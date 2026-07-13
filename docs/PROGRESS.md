@@ -2,7 +2,7 @@
 
 **Hackathon:** [Build on Canton](https://forum.canton.network/t/build-on-canton-hackathon/8635) by Encode Club  
 **Team repo:** https://github.com/AshThunder/cantara  
-**Last updated:** July 10, 2026
+**Last updated:** July 13, 2026
 
 ---
 
@@ -43,8 +43,8 @@ Cantara is a privacy-first financial platform on Canton Network combining **priv
 - [x] End-to-end smoke on production (UI send + invoice lifecycle)
 
 ### Remaining for Encode submit
-- [ ] 3-minute video pitch
-- [ ] Google Slides share link
+- [x] 3-minute video pitch (edited locally — upload + paste URL)
+- [x] Google Slides share link
 - [ ] Optional: distinct Loop parties on 5N Sandbox
 
 ---

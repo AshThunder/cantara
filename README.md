@@ -1,27 +1,28 @@
 # Cantara
 
-**Private payments and trade finance on Canton Network.**
+**Private payments and invoice financing on Canton Network.**
 
 [![Hackathon](https://img.shields.io/badge/Hackathon-Build%20on%20Canton-teal)](https://forum.canton.network/t/build-on-canton-hackathon/8635)
-[![Track](https://img.shields.io/badge/Tracks-Payments%20%2B%20Private%20DeFi-blue)](#hackathon-tracks)
+[![Track](https://img.shields.io/badge/Tracks-T3%20Payments%20%2B%20T1%20Private%20DeFi-blue)](#hackathon-tracks)
 
-Cantara is a privacy-first financial platform for the [Build on Canton Hackathon](https://forum.canton.network/t/build-on-canton-hackathon/8635) by Encode Club. It combines confidential P2P payments with private invoice financing — all on institutional-grade Canton infrastructure.
+Cantara is built for the [Build on Canton Hackathon](https://forum.canton.network/t/build-on-canton-hackathon/8635) (Encode Club). It combines private P2P payments with multi-party invoice financing — on Canton DevNet, not a mock ledger.
 
 **Repository:** https://github.com/AshThunder/cantara
 
 ---
 
-## Live demo
+## Live links (Encode form)
 
 | Resource | URL |
 |----------|-----|
 | **App** | https://cantara-hackathon.vercel.app |
 | **API** | https://cantara-api-production.up.railway.app |
-| **Health** | https://cantara-api-production.up.railway.app/api/health |
-| Video | *(add after recording)* |
-| Deck | *(add Google Slides link)* |
+| **Health** | https://cantara-api-production.up.railway.app/api/health → `mode: "canton"` |
+| **Repo** | https://github.com/AshThunder/cantara |
+| **Video** | *(paste YouTube / Loom URL after upload)* |
+| **Deck** | [Google Slides — Cantara-Final](https://docs.google.com/presentation/d/1grlqa0Dv2jX9DAKMiLxVaK2QJThOw_-r1N6VaXO84F4/edit?usp=sharing) |
 
-Open the app → **Get Started** (Alice) → Dashboard → Send. API mode is `canton` (5N DevNet).
+Open the app → **Get Started** (Alice) → **Send** to Bob → **Disconnect** → **Log In** as Bob → **Activity** shows the payment received.
 
 ---
 
@@ -29,41 +30,44 @@ Open the app → **Get Started** (Alice) → Dashboard → Send. API mode is `ca
 
 | Module | Track | Description |
 |--------|-------|-------------|
-| **Payments** | Track 3 — Payments & Neobanking | P2P send, requests, subscriptions, refunds |
-| **Invoices** | Track 1 — Private DeFi & Capital Markets | Multi-party invoice financing |
+| **Payments** | Track 3 — Payments & Neobanking | Send, refund, requests, multi-send, subscriptions, checkout, wallet |
+| **Invoices** | Track 1 — Private DeFi & Capital Markets | Propose → accept → attest → offer → settle |
 
 ---
 
-## Live deployment (5N Sandbox)
+## Live on 5N Sandbox DevNet
 
 | Item | Value |
 |------|--------|
 | Package | `cantara` v0.1.0 |
 | Package ID | `b011f10b002d597291b67192a3c6c036a5ea9c7387726718292833d2c3cf3f58` |
 | Validator | 5N Sandbox via [Seaport](https://app.devnet.seaport.io/encode-hackathon) |
-| Proven on-ledger | `Payment` · `Payment_Refund` · invoice lifecycle (propose → settle) |
+| Proven on-ledger | Payment · Refund · full invoice lifecycle |
 | Frontend | [Vercel](https://cantara-hackathon.vercel.app) |
 | Backend | [Railway](https://cantara-api-production.up.railway.app) → JSON Ledger API |
+
+**5N Sandbox DevNet** = the shared Canton DevNet validator for this hackathon (Five North). Our API submits real Daml commands there. LocalNet alone does not qualify.
 
 ---
 
 ## Features
 
-### Payments
-- Private P2P payments (sender/recipient visibility only)
-- Payment requests with shareable links
-- Subscriptions (recurring payments + auto-charge scheduler)
-- Multi-send (batch up to 10 recipients)
+### Payments (T3)
+- Private P2P payments (sender / recipient visibility)
+- Payment requests with shareable `/pay/:id` links
+- Subscriptions + auto-charge scheduler
+- Multi-send (batch recipients)
 - Refunds
-- Wallet / neobank balance (opening credit ± payments)
+- Wallet balance (opening credit ± payments)
+### Merchant checkout + SDK
+- In-app **Checkout** page (Carol / business)
+- TypeScript package [`sdk/`](sdk/) — `createCheckout` → shareable `/pay/:id` link  
+  Full guide: [sdk/README.md](sdk/README.md)
 
-### Merchant SDK
-TypeScript package in `sdk/` — `createCheckout`, `getWallet`, pay URLs for external apps.
-
-### Invoice financing
-- Supplier submits invoice → buyer confirms
+### Invoice financing (T1)
+- Supplier proposes → buyer accepts
 - Buyer attests to financier
-- Confidential financing offer (supplier + financier only)
+- Confidential financing offer
 - Settlement on maturity
 
 ---
@@ -72,107 +76,62 @@ TypeScript package in `sdk/` — `createCheckout`, `getWallet`, pay URLs for ext
 
 ```
 cantara/
-├── daml/                  # Daml smart contracts
-│   └── Cantara/
-│       ├── Payments/      # Payment, Request, Subscription, Batch
-│       ├── Invoices/      # Invoice financing workflow
-│       └── Scripts/       # Demo script
-├── backend/               # TypeScript REST API
-├── frontend/              # React app (teal & amber theme)
-├── sdk/                   # Merchant SDK (cantara-sdk)
-└── docs/
-    ├── PROGRESS.md        # Development log
-    └── PRESENTATION.md    # Slide content (deck generated locally)
+├── daml/           # Daml contracts (payments + invoices)
+├── backend/        # Express API → Canton JSON Ledger API
+├── frontend/       # React app
+├── sdk/            # Merchant SDK (cantara-sdk)
+└── docs/           # Pitch, deploy, Seaport guides
 ```
 
 ---
 
-## Quick start
-
-### Daml contracts
+## Quick start (local)
 
 ```bash
+# Contracts
 export PATH="$HOME/.dpm/bin:$PATH"
-cd cantara
-dpm build
-# Output: .daml/dist/cantara-0.1.0.dar
+dpm build   # → .daml/dist/cantara-0.1.0.dar
+
+# API (port 3001)
+cd backend && npm install && npm run dev
+
+# UI (port 5173)
+cd frontend && npm install && npm run dev
 ```
 
-### Backend
-
-```bash
-cd backend
-npm install
-npm run dev    # http://localhost:3001
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev    # http://localhost:5173
-```
-
-**Important:** Run the backend first (see above). The UI needs the API on port 3001 — without it, party connect will fail and pages may appear blank after clicking Get Started.
-
-Open **http://localhost:5173** (not port 3001). Connect as a demo party (Alice, Bob, Carol, Financier). UI proxies `/api` to the backend.
+Set `LEDGER_MODE=demo` for in-memory, or `canton` with 5N credentials — see [DEPLOY.md](docs/DEPLOY.md). **Never commit `backend/.env`.**
 
 ---
 
-## Privacy model
+## Privacy (simple)
 
-On Canton, privacy comes from **party-based visibility** in Daml:
+On Canton, only parties named on a contract can see it:
 
-- Payment amounts → visible only to sender and recipient
-- Financing terms → visible only to supplier and financier
-- Invoice details → shared selectively per workflow stage
+- Payment amounts → sender and recipient
+- Financing terms → supplier and financier
+- Invoice details → shared step by step in the workflow
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
-│  React UI   │────▶│  REST API    │────▶│  Canton Ledger  │
-│  Vercel     │     │  Railway     │     │  5N Sandbox     │
-└─────────────┘     └──────────────┘     └─────────────────┘
-                      LEDGER_MODE=canton      JSON Ledger API v2
+React (Vercel)  →  Express (Railway, LEDGER_MODE=canton)  →  5N Sandbox JSON Ledger API
 ```
 
-Locally, set `LEDGER_MODE=demo` for an in-memory ledger, or `canton` with 5N credentials (see [DEPLOY.md](docs/DEPLOY.md)).
-
 ---
 
-## API endpoints
+## Docs
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/health` | Health + ledger mode |
-| GET | `/api/parties` | List demo parties |
-| POST | `/api/payments/send` | Send payment |
-| GET | `/api/payments?party=` | List payments |
-| GET | `/api/wallet?party=` | Derived wallet balance |
-| POST | `/api/payments/multi-send` | Batch send |
-| POST | `/api/subscriptions` | Create subscription |
-| POST | `/api/checkout` | Create merchant checkout |
-| GET | `/api/invoices?party=` | List invoices |
-| POST | `/api/invoices` | Create invoice proposal |
-| POST | `/api/invoices/proposals/:id/accept` | Buyer confirms |
-| POST | `/api/invoices/:id/attest` | Buyer attests financier |
-| POST | `/api/invoices/:id/offer` | Financier submits offer |
-| POST | `/api/invoices/:id/settle` | Buyer settles |
-
----
-
-## Documentation
-
-- [Canton DevNet integration](docs/CANTON-INTEGRATION.md) — wire live API to 5N Sandbox
-- [Deploy guide](docs/DEPLOY.md) — Vercel + Railway step-by-step
-- [Final submission guide](docs/FINAL-SUBMISSION.md) — checklist, video, DevNet
-- [Progress log](docs/PROGRESS.md)
-- [Seaport invoice demo](docs/SEAPORT-INVOICE-DEMO.md)
-- [Presentation outline](docs/PRESENTATION.md) — run `cd docs && node generate-slides.mjs` to build `.pptx` locally
+| Doc | Purpose |
+|-----|---------|
+| [PITCH.md](docs/PITCH.md) | Spoken pitch (simple words) |
+| [sdk/README.md](sdk/README.md) | Merchant SDK — create checkout + pay URL |
+| [FINAL-SUBMISSION.md](docs/FINAL-SUBMISSION.md) | Encode checklist |
+| [DEPLOY.md](docs/DEPLOY.md) | Vercel + Railway |
+| [CANTON-INTEGRATION.md](docs/CANTON-INTEGRATION.md) | DevNet wiring |
+| [SEAPORT-INVOICE-DEMO.md](docs/SEAPORT-INVOICE-DEMO.md) | On-ledger invoice walkthrough |
+| [PROGRESS.md](docs/PROGRESS.md) | Build log |
 
 ---
 

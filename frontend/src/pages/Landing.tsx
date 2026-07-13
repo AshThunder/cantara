@@ -420,7 +420,7 @@ export function Landing() {
       <section className="py-24 bg-white">
         <div className="container mx-auto px-6 sm:px-8 max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-cantara-deep mb-3">Live on DevNet in minutes</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-cantara-deep mb-3">Live on DevNet</h2>
             <p className="text-gray-500">No wallet wrap step — connect a party and exercise Daml contracts.</p>
           </div>
           <div className="relative grid md:grid-cols-3 gap-10">
@@ -448,28 +448,46 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Fees — amber accent strip, 3 tiles not 2 purple $0s */}
+      {/* What ships — DevNet proof, not a fake fee schedule */}
       <section className="pb-24 bg-white">
         <div className="container mx-auto px-6 sm:px-8 max-w-7xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-cantara-deep text-center mb-10">
-            Built for the hackathon — not a fee schedule
+          <h2 className="text-3xl md:text-4xl font-bold text-cantara-deep text-center mb-3">
+            What runs on Canton today
           </h2>
-          <div className="grid sm:grid-cols-3 gap-5">
+          <p className="text-gray-500 text-center max-w-2xl mx-auto mb-10">
+            Live on 5N Sandbox DevNet — every send, refund, and invoice choice hits the ledger.
+          </p>
+          <div className="grid sm:grid-cols-3 gap-8">
             {[
-              { label: 'Platform fees', value: '$0' },
-              { label: 'Account opening', value: '$0' },
-              { label: 'Subscription product fees', value: '$0' },
-            ].map((f, i) => (
+              {
+                icon: Send,
+                title: 'T3 Payments',
+                desc: 'Send, refund, requests, multi-send, subscriptions, checkout, and wallet — exercised via the JSON Ledger API.',
+              },
+              {
+                icon: FileText,
+                title: 'T1 Invoice financing',
+                desc: 'Propose → accept → attest → offer → settle. Selective disclosure across supplier, buyer, and financier.',
+              },
+              {
+                icon: Waves,
+                title: '5N Sandbox DevNet',
+                desc: 'Package cantara 0.1.0 on Seaport. API health returns mode: canton — Lighthouse links on every payment.',
+              },
+            ].map((item, i) => (
               <motion.div
-                key={f.label}
+                key={item.title}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className="rounded-3xl bg-gradient-to-br from-gray-50 to-cantara-mint/40 border border-gray-100 p-10 text-center"
+                className="text-center sm:text-left"
               >
-                <p className="text-5xl font-bold text-cantara-accent mb-2">{f.value}</p>
-                <p className="text-gray-600 font-medium">{f.label}</p>
+                <div className="inline-flex w-12 h-12 rounded-xl bg-cantara-mint items-center justify-center mb-4">
+                  <item.icon className="w-6 h-6 text-cantara-teal" />
+                </div>
+                <h3 className="text-xl font-bold text-cantara-deep mb-2">{item.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
