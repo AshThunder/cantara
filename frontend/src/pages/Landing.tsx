@@ -461,12 +461,12 @@ export function Landing() {
             {[
               {
                 icon: Send,
-                title: 'T3 Payments',
+                title: 'Private payments',
                 desc: 'Send, refund, requests, multi-send, subscriptions, checkout, and wallet — exercised via the JSON Ledger API.',
               },
               {
                 icon: FileText,
-                title: 'T1 Invoice financing',
+                title: 'Invoice financing',
                 desc: 'Propose → accept → attest → offer → settle. Selective disclosure across supplier, buyer, and financier.',
               },
               {
